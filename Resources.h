@@ -23,4 +23,9 @@ static const char MAINMENU_BTN_MUSIC_PRESSED[] = "images/mainmenu/music_1.png";
 static const char MAINMENU_BTN_REWARD_PRESSED[] = "images/mainmenu/reward_1.png";
 static const char MAINMENU_BTN_UNKNOWN_PRESSED[] = "images/mainmenu/unknown_1.png";
 
+//Players
+static const char HEAD_NAME[] = "images/players/%s.png";
+static const char HP_BAR[] = "images/players/hp_bar.png";
+static const char SP_BAR[] = "images/players/sp_bar.png";
+
 #endif

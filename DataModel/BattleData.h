@@ -1,11 +1,12 @@
 #ifndef __BATTLE_DATA_H__
 #define __BATTLE_DATA_H__
 
+#include "AbstractBattlerData.h"
 #include <map>
 #include <string>
 
 using namespace std;
-
+using namespace battledata;
 namespace battledata {
 
 	class PlayerData;
@@ -32,14 +33,18 @@ namespace battledata {
 		~BattleData(void);
 
 		static BattleData *loadData(int sceneNo);					//Load battle scene data from config file
-		void loadPlayers(int saveNo);								//Load player data from save file
+		void loadPlayers(int saveNo){};								//Load player data from save file
 
-		void setPlayer(PlayerData *newPlayer);
-		void setMonster(MonsterData *newMonster);
-		PlayerData& getPlayer(int i) const;
-		MonsterData& getMonster(int i) const;
-		const map<int, PlayerData*>& getPlayers() const;
-		const map<int, MonsterData*>& getMonsters() const;
+		void setPlayer(PlayerData *newPlayer){};
+		void setMonster(MonsterData *newMonster){};
+		
+		int getPlayerProperty(int i, PLAYER_PROP_TYPE prop);
+		int getMonsterProperty(int i, PLAYER_PROP_TYPE prop);
+		int getPlayerCount() { return _players.size(); }
+		int getMonsterCount() { return _monsters.size(); }
+		
+		map<int, string>* getPlayerNames();
+		map<int, string>* getMonsterNames();
 
 		string getMapName() const { return _mapName; }
 		string getBgmName() const { return _mapBgm; }

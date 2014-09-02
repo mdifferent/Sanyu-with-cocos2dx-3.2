@@ -18,15 +18,6 @@ public:
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 
-
-	void startCallback(Ref* pSender);
-	void loadCallback(Ref* pSender);
-	void extraCallback(Ref* pSender);
-	void systemCallback(Ref* pSender);
-	void exitCallback(Ref* pSender);
-	void cgCallback(Ref* pSender);
-	void musicCallback(Ref* pSender);
-	void rewardCallback(Ref* pSender);
 };
 
 #endif // __HELLOWORLD_SCENE_H__

@@ -3,18 +3,17 @@
 
 #include "cocos2d.h"
 #include <string>
-
+#include "CommonUtils.h"
 USING_NS_CC;
 using namespace std;
 
 class BackgroundLayer : public Layer
 {
 public:
-	BackgroundLayer(void);
-	~BackgroundLayer(void);
+	BackgroundLayer(const string name) : _bgName(name) {}
 
 	bool init();
-	static BackgroundLayer *createWithMapName(const string name);
+	CREATE_FUNC_WITH_STRING(BackgroundLayer, name);
 private:
 	string _bgName;
 };

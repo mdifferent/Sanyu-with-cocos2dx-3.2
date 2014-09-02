@@ -3,20 +3,19 @@
 
 #include "cocos2d.h"
 #include <map>
-USING_NS_CC;
+#include <string>
 using namespace std;
-
-class battledata::PlayerData;
+USING_NS_CC;
 
 class PlayerLayer : public Layer
 {
 public:
-	PlayerLayer();
-	~PlayerLayer();
+	PlayerLayer(const map<int, string>* names) { _heads = *names; }
+	~PlayerLayer() { delete &_heads; }
 
-	virtual bool init();
-	static PlayerLayer* createWithData(const map<int, battledata::PlayerData*>& data);
-
+	bool init();
+	static PlayerLayer* createWithNames(const map<int, string>*);
 private:
+	map<int, string> _heads;
 };
 #endif

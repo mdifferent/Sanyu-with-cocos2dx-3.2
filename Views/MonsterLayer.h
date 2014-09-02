@@ -2,21 +2,21 @@
 #define __MONSTER_LAYER_H__
 
 #include "cocos2d.h"
+#include <map>
+#include <string>
 
 USING_NS_CC;
-
-class battledata::MonsterData;
+using namespace std;
 
 class MonsterLayer : public Layer
 {
 public:
-	MonsterLayer();
-	~MonsterLayer();
+	MonsterLayer(const map<int, string>* names) { _heads = *names; }
+	~MonsterLayer() { delete &_heads; }
 
-	virtual bool init();
-	static MonsterLayer* createWithData(const map<int, battledata::MonsterData*>& data);
-
+	bool init();
+	static MonsterLayer* createWithNames(const map<int, string>*);
 private:
-
+	map<int, string> _heads;
 };
 #endif

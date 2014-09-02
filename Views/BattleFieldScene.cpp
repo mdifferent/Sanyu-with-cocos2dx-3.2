@@ -5,6 +5,10 @@
 #include "MonsterLayer.h"
 #include "ListLayer.h"
 
+BattleFieldScene::~BattleFieldScene()
+{
+	CC_SAFE_DELETE(_data);
+}
 
 BattleFieldScene* BattleFieldScene::scene(int sceneId)
 {
@@ -30,18 +34,18 @@ bool BattleFieldScene::init()
 	if (!_data)
 		return false;
 
-	int playerCount = _data->getPlayers().size();
-	int monsterCount = _data->getMonsters().size();
+	int playerCount = _data->getPlayerCount();
+	int monsterCount = _data->getMonsterCount();
 	for (int i = 0; i<playerCount; i++)
 		_playerFinishFlag.insert(std::make_pair(i, false));
 	for (int i = 0; i<monsterCount; i++)
 		_monsterFinishFlag.insert(std::make_pair(i, true));
 
 	//Init layers
-	_bgLayer = BackgroundLayer::createWithMapName(_data->getMapName());
+	_bgLayer = BackgroundLayer::create(_data->getMapName());
 	_infoLayer = InfoBarLayer::create();
-	_playerLayer = PlayerLayer::createWithData(_data->getPlayers());
-	_monsterLayer = MonsterLayer::createWithData(_data->getMonsters());
+	_playerLayer = PlayerLayer::createWithNames(_data->getPlayerNames());
+	_monsterLayer = MonsterLayer::createWithNames(_data->getMonsterNames());
 	if (_bgLayer && _infoLayer && _playerLayer && _monsterLayer) {
 		this->addChild(_bgLayer, 0);
 		this->addChild(_infoLayer, 1);
@@ -76,7 +80,19 @@ bool BattleFieldScene::init()
 	}
 
 	_roundOwner = PLAYER;
-	this->schedule(SEL_SCHEDULE(BattleFieldScene::updateGame), 0.5f);
+	this->schedule(SEL_SCHEDULE(&BattleFieldScene::updateGame), 0.5f);
 
 	return true;
 }
+
+void BattleFieldScene::updateGame(float ft)
+{
+
+}
+
+TableViewCell* BattleFieldScene::tableCellAtIndex(TableView *table, ssize_t idx)
+{
+	return NULL;
+}
+ssize_t BattleFieldScene::numberOfCellsInTableView(TableView *table){ return 0; }
+void BattleFieldScene::tableCellTouched(TableView* table, TableViewCell* cell){}

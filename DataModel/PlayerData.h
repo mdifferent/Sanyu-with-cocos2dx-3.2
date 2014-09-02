@@ -8,7 +8,6 @@ namespace battledata {
 	{
 	public:
 		PlayerData(const string name) : AbstractBattlerData(name){};
-		~PlayerData();
 
 		int useItem(const int id);
 		void obtainItem(const int id, const int iCount = 1);

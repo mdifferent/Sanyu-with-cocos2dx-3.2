@@ -16,17 +16,14 @@ USING_NS_CC_EXT;
 	class ListLayer : public Layer
 	{
 	public:
-		ListLayer();
-		~ListLayer();
-
-		bool init();
+		bool init() { return true; }
 		static ListLayer *createWithDataSource(TableViewDataSource *source);
 
 		void setContentType(LIST_TYPE);
 		LIST_TYPE getContentType() const { return _type; }
 		void setDataSource(TableViewDataSource *source){ _datasource = source; }
 		void setDelegate(TableViewDelegate *delegate){ _pTableView->setDelegate(delegate); }
-		void setTouchEnabled(bool value);
+		void setTouchEnabled(bool value) {}
 
 	private:
 		LIST_TYPE				_type;

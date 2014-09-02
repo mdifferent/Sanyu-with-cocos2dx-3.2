@@ -7,9 +7,6 @@ USING_NS_CC;
 class InfoBarLayer : public Layer
 {
 public:
-	InfoBarLayer();
-	~InfoBarLayer();
-
 	CREATE_FUNC(InfoBarLayer);
 
 private:

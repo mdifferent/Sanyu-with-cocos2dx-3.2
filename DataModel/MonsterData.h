@@ -12,8 +12,6 @@ namespace battledata {
 	{
 	public:
 		MonsterData(const string name) : AbstractBattlerData(name){}
-		~MonsterData(void){}
-
 	private:
 		MONSTER_TYPE	_type;
 		int				_exp;
