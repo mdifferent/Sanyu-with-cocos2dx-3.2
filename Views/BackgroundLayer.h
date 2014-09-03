@@ -14,6 +14,8 @@ public:
 
 	bool init();
 	CREATE_FUNC_WITH_STRING(BackgroundLayer, name);
+
+	void onEnter();
 private:
 	string _bgName;
 };

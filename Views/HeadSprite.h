@@ -12,6 +12,7 @@
 #include "cocos2d.h"
 #include <string>
 #include "CommonUtils.h"
+
 USING_NS_CC;
 using namespace std;
 
@@ -21,11 +22,9 @@ public:
     HeadSprite(const string name) {_name = name;}
     
     virtual bool init();
-    //static HeadSprite* createWithPlayerName(const string name);
 	CREATE_FUNC_WITH_STRING(HeadSprite, name);
 
-    void onHPModified(int value,float percentage);
-    void onSPModified(int value,float percentage);
+	void onValueModified(int value, int type);	//type 1: HP, 2:SP
 private:
     string _name;
 };

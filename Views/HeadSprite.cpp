@@ -13,20 +13,6 @@
 	#include "../proj.win32/WIN32Utils.h"
 #endif 
 
-/*
-HeadSprite* HeadSprite::createWithPlayerName(const string name)
-{
-    HeadSprite *sprite = new HeadSprite(name);
-    if (sprite && sprite->init()) {
-        sprite->autorelease();
-        return sprite;
-    }
-    else {
-        CC_SAFE_DELETE(sprite);
-        return NULL;
-    }
-}*/
-
 bool HeadSprite::init()
 {
     if (!Sprite::init())
@@ -55,7 +41,7 @@ bool HeadSprite::init()
     hpBarTimer->setMidpoint(Vec2(0,0));
     hpBarTimer->setBarChangeRate(Vec2(1,0));
     hpBarTimer->setPosition(170,70);
-    addChild(hpBarTimer,1,1);
+    addChild(hpBarTimer,1,"hpbar");
     
     //Player SP bar
     ProgressTimer *spBarTimer = ProgressTimer::create(sp);
@@ -63,38 +49,55 @@ bool HeadSprite::init()
     spBarTimer->setMidpoint(Vec2(0,0));
     spBarTimer->setBarChangeRate(Vec2(1, 0));
     spBarTimer->setPosition(170,50);
-    addChild(spBarTimer,1,2);
+    addChild(spBarTimer,1,"spbar");
     
     //Player Name
     Label* nameLabel = Label::createWithSystemFont(_name, NAME_FONT, NAME_FONT_SIZE);
     nameLabel->setPosition(165,80);
-    //nameLabel->setOpacity(0);
-    this->addChild(nameLabel,2,3);
+    this->addChild(nameLabel,2,"name");
     
     //Player HP number
     Label* hpLabel = Label::createWithSystemFont("0/0", NAME_FONT, HP_NUM_FONT_SIZE);
     hpLabel->setPosition(165,44);
-    //hpLabel->setOpacity(0);
-    this->addChild(hpLabel,2,4);
+    this->addChild(hpLabel,2,"hpnum");
     
     //Player SP number
     Label* spLabel = Label::createWithSystemFont("0/0", NAME_FONT, HP_NUM_FONT_SIZE);
     spLabel->setPosition(157,18);
-    //spLabel->setOpacity(0);
-    this->addChild(spLabel,2,5);
+    this->addChild(spLabel,2,"spnum");
 
     return true;
 }
 
-void HeadSprite::onHPModified(int value,float percentage)
+void HeadSprite::onValueModified(int value, int target)
 {
-    ProgressTimer *hpBar = dynamic_cast<ProgressTimer*>(this->getChildByTag(4));
-    float per = hpBar->getPercentage();
-    hpBar->runAction(ProgressFromTo::create(0.5f,per,per+percentage));
-    
-}
+	Label *label = NULL;
+	ProgressTimer *bar = NULL;
+	if (target == 1) {
+		label = dynamic_cast<Label*>(this->getChildByName("hpnum"));
+		bar = dynamic_cast<ProgressTimer*>(this->getChildByName("hpbar"));
+	}
+	else if (target == 2) {
+		label = dynamic_cast<Label*>(this->getChildByName("spnum"));
+		bar = dynamic_cast<ProgressTimer*>(this->getChildByName("spbar"));
+	}
+		
+	string hpStr = label->getString();
+	size_t pos = hpStr.find("/");
+	int maxValue = stoi(hpStr.substr(pos + 1));
+	int currentHp = stoi(hpStr.substr(0, pos));
+	int newValue = currentHp + value;
+	if (newValue < 0)
+		newValue = 0;
+	label->setString(to_string(newValue).append(hpStr.substr(pos)));
 
-void HeadSprite::onSPModified(int value, float percentage)
-{
-    
+	float deltaPer = (abs(value) / maxValue)  * 100.0f;
+    float per = bar->getPercentage();
+	if (currentHp == 0)
+		bar->runAction(ProgressFromTo::create(0.5f, per, 0));
+	else if (value > 0)
+		bar->runAction(ProgressFromTo::create(0.5f, per, per + deltaPer));
+	else if (value < 0)
+		bar->runAction(ProgressFromTo::create(0.5f, per, per - deltaPer));
+
 }

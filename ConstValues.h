@@ -7,4 +7,6 @@ const int NAME_FONT_SIZE = 25;
 
 static const int MAX_FILE_PATH_LENGTH = 50;
 
+static const float BG_FADEIN_TIME = 0.5f;
+
 #endif

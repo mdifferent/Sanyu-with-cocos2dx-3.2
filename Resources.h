@@ -28,4 +28,18 @@ static const char HEAD_NAME[] = "images/players/%s.png";
 static const char HP_BAR[] = "images/players/hp_bar.png";
 static const char SP_BAR[] = "images/players/sp_bar.png";
 
+static const char MAINMENU_BTN_ATTACK[] = "images/players/attack.png";
+static const char MAINMENU_BTN_ATTACK_PRESSED[] = "images/players/attack_act.png";
+static const char MAINMENU_BTN_ESCAPE[] = "images/players/escape.png";
+static const char MAINMENU_BTN_ESCAPE_PRESSED[] = "images/players/escape_act.png";
+static const char MAINMENU_BTN_GUARD[] = "images/players/guard.png";
+static const char MAINMENU_BTN_GUARD_PRESSED[] = "images/players/guard_act.png";
+static const char MAINMENU_BTN_ITEM[] = "images/players/item.png";
+static const char MAINMENU_BTN_ITEM_PRESSED[] = "images/players/item_act.png";
+static const char MAINMENU_BTN_SKILL[] = "images/players/skill.png";
+static const char MAINMENU_BTN_SKILL_PRESSED[] = "images/players/skill_act.png";
+
+//Layers
+static const char INFO_BAR[] = "images/info_bar.png";
+
 #endif

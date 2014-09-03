@@ -29,7 +29,7 @@ USING_NS_CC_EXT;
 		LIST_TYPE				_type;
 		TableView*				_pTableView;
 		Sprite*					_pBackImg;
-		LabelTTF*				_pLabel;
+		Label*					_pLabel;
 		TableViewDataSource*	_datasource;
 	};
 
