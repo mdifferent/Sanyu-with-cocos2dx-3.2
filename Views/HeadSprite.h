@@ -24,8 +24,8 @@ public:
     virtual bool init();
 	CREATE_FUNC_WITH_STRING(HeadSprite, name);
 
-	void onValueModified(int value, int type);	//type 1: HP, 2:SP
-private:
+	virtual void onValueModified(int value, int type);	//type 1: HP, 2:SP
+protected:
     string _name;
 };
 

@@ -39,6 +39,19 @@ static const char MAINMENU_BTN_ITEM_PRESSED[] = "images/players/item_act.png";
 static const char MAINMENU_BTN_SKILL[] = "images/players/skill.png";
 static const char MAINMENU_BTN_SKILL_PRESSED[] = "images/players/skill_act.png";
 
+//Monsters
+static const char MONSTER_HEAD_NAME[] = "images/monsters/%s.png";
+static const char MONSTER_HP_BAR[] = "images/monsters/monster_hpbar.png";
+
+static const char MAGIC_BTN_PATH[] = "images/paopao/magic_tag.png";
+static const char BUBBLE_PLIST_PATH[] = "images/paopao/paopao.plist";
+static const char BUBBLE_TEXTURE_PATH[] = "images/paopao/paopao.png";
+static const char MAGIC_AVA_PATH[] = "images/paopao/magic_ava.png";
+static const char MAGIC_UNAVA_PATH[] = "images/paopao/magic_unava.png";
+static const char LONG_HP_BAR[] = "images/paopao/monster_hpbar_L.png";
+static const char TIME_BAR_FULL[] = "images/paopao/timebar.png";
+static const char TIME_BAR_EMPTY[] = "images/paopao/timebar_nil.png";
+
 //Layers
 static const char INFO_BAR[] = "images/info_bar.png";
 

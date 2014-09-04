@@ -105,12 +105,13 @@ void HeadSprite::onValueModified(int value, int type)
 	//Modify bar
 	float deltaPer = (abs(value) / maxValue)  * 100.0f;
     float per = bar->getPercentage();
-	if (currentHp == 0)
+	if (newValue == 0)
 		bar->runAction(ProgressFromTo::create(0.5f, per, 0));
-	else if (value > 0)
-		bar->runAction(ProgressFromTo::create(0.5f, per, per + deltaPer));
-	else if (value < 0)
-		bar->runAction(ProgressFromTo::create(0.5f, per, per - deltaPer));
+	else 
+		if (value > 0)
+			bar->runAction(ProgressFromTo::create(0.5f, per, per + deltaPer));
+		else
+			bar->runAction(ProgressFromTo::create(0.5f, per, per - deltaPer));
 	
 	//Show damage number
 	if (type == 1 && value < 0) {

@@ -8,9 +8,20 @@
 USING_NS_CC;
 using namespace std;
 
+
+
 class MonsterLayer : public Layer
 {
 public:
+	enum MONSTER_LAYER_STATUS {
+		WAIT_TARGET,
+		TARGET_SELECTED,
+		SPECIAL_ATTACK_PRE,
+		SPECIAL_ATTACK,
+		SPECIAL_ATTACK_FINISHED,
+		SLEEP,
+	};
+
 	MonsterLayer(const map<int, string>* names) { _heads = *names; }
 	~MonsterLayer() { delete &_heads; }
 
