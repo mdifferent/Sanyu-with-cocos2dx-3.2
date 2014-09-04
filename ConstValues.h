@@ -9,4 +9,6 @@ static const int MAX_FILE_PATH_LENGTH = 50;
 
 static const float BG_FADEIN_TIME = 0.5f;
 
+static const int DEFAULT_DAMAGE_DIGIT = 3;	//初始伤害数字的个数
+
 #endif

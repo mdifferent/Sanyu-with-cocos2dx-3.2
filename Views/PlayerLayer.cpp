@@ -151,3 +151,28 @@ void PlayerLayer::onPlayerPropModified(int type, int target, int value)
 	HeadSprite *sprite = (HeadSprite*)this->getChildByTag(target);
 	sprite->onValueModified(value, type);
 }
+
+void PlayerLayer::beforeSpecialAttack(int playerNo)
+{
+	float middleX = Director::getInstance()->getVisibleSize().width/2;
+	for each (pair<int, string> var in _heads) {
+		if (var.first != playerNo)
+			this->getChildByTag(var.first)->runAction(FadeOut::create(0.5f));
+	}
+	float horiDistance = middleX*0.5 - this->getChildByTag(playerNo)->getPositionX();
+	this->getChildByTag(playerNo)->runAction(MoveBy::create(0.5f, Vec2(horiDistance, 0)));
+}
+
+void PlayerLayer::afterSpecialAttack(int playerNo)
+{
+	int playerCount = _heads.size();
+	float middleX = Director::getInstance()->getVisibleSize().width / 2;
+	float playerPosX = this->getChildByTag(playerNo)->getPositionX();
+	float headWidth = this->getChildByTag(playerNo)->getContentSize().width;
+	float horiDistance = middleX + (playerNo - playerCount*0.5 + 0.5)*headWidth - playerPosX;
+	this->getChildByTag(playerNo)->runAction(MoveBy::create(1.0f, Vec2(horiDistance, 0)));
+	for each (pair<int, string> var in _heads) {
+		if (var.first != playerNo)
+			this->getChildByTag(var.first)->runAction(FadeIn::create(0.5f));
+	}
+}

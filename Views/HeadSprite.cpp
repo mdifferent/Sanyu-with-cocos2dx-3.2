@@ -7,6 +7,7 @@
 //
 
 #include "HeadSprite.h"
+#include "DigitSprite.h"
 #include "ConstValues.h"
 #include "Resources.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
@@ -66,22 +67,32 @@ bool HeadSprite::init()
     spLabel->setPosition(157,18);
     this->addChild(spLabel,2,"spnum");
 
+	//Damage number
+	DigitSprite *digit = DigitSprite::create();
+	digit->setPosition(getPosition());
+	addChild(digit, 3, "digit");
+
     return true;
 }
 
-void HeadSprite::onValueModified(int value, int target)
+void HeadSprite::onValueModified(int value, int type)
 {
 	Label *label = NULL;
 	ProgressTimer *bar = NULL;
-	if (target == 1) {
+	if (type == 1) {
 		label = dynamic_cast<Label*>(this->getChildByName("hpnum"));
 		bar = dynamic_cast<ProgressTimer*>(this->getChildByName("hpbar"));
 	}
-	else if (target == 2) {
+	else if (type == 2) {
 		label = dynamic_cast<Label*>(this->getChildByName("spnum"));
 		bar = dynamic_cast<ProgressTimer*>(this->getChildByName("spbar"));
 	}
+	if (!label || !bar) {
+		CCLOG("Get sprite error");
+		return;
+	}
 		
+	//Modify number
 	string hpStr = label->getString();
 	size_t pos = hpStr.find("/");
 	int maxValue = stoi(hpStr.substr(pos + 1));
@@ -90,7 +101,8 @@ void HeadSprite::onValueModified(int value, int target)
 	if (newValue < 0)
 		newValue = 0;
 	label->setString(to_string(newValue).append(hpStr.substr(pos)));
-
+	
+	//Modify bar
 	float deltaPer = (abs(value) / maxValue)  * 100.0f;
     float per = bar->getPercentage();
 	if (currentHp == 0)
@@ -99,5 +111,10 @@ void HeadSprite::onValueModified(int value, int target)
 		bar->runAction(ProgressFromTo::create(0.5f, per, per + deltaPer));
 	else if (value < 0)
 		bar->runAction(ProgressFromTo::create(0.5f, per, per - deltaPer));
-
+	
+	//Show damage number
+	if (type == 1 && value < 0) {
+		DigitSprite *digit = (DigitSprite*)getChildByName("digit");
+		digit->showDigit(abs(value));
+	}
 }

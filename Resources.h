@@ -42,4 +42,8 @@ static const char MAINMENU_BTN_SKILL_PRESSED[] = "images/players/skill_act.png";
 //Layers
 static const char INFO_BAR[] = "images/info_bar.png";
 
+//plists
+static const char DIGIT_PLIST_PATH[] = "images/number.plist";
+static const char DIGIT_PNG_PATH[] = "images/number.png";
+
 #endif
