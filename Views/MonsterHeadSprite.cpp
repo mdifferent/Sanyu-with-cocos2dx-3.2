@@ -35,22 +35,29 @@ bool MonsterHeadSprite::init()
 	return true;
 }
 
-void MonsterHeadSprite::onHPModified(int deltaValue, float deltaPercent)
+void MonsterHeadSprite::onHPModified(int deltaValue, float deltaPercent, bool isDead)
 {
 	ProgressTimer *bar = dynamic_cast<ProgressTimer*>(this->getChildByName("hpbar"));
 	float currentPer = bar->getPercentage();
-	if (deltaValue > 0)
-		bar->runAction(Sequence::create(FadeIn::create(0.3f),
-		CCProgressFromTo::create(0.3f, currentPer, currentPer + deltaPercent), 
-		CCFadeOut::create(0.3f), NULL));
-	else
-		bar->runAction(Sequence::create(FadeIn::create(0.3f),
-		ProgressFromTo::create(0.3f, currentPer, currentPer - deltaPercent), 
-		FadeOut::create(0.3f), NULL));
 
-	//Show damage number
 	if (deltaValue < 0) {
 		DigitSprite *digit = (DigitSprite*)getChildByName("digit");
 		digit->showDigit(abs(deltaValue));
+		if (isDead) {
+			if (currentPer - deltaPercent < 0) 
+				bar->runAction(Sequence::create(FadeIn::create(0.3f),
+					ProgressFromTo::create(0.3f, currentPer, 0),
+					FadeOut::create(0.3f), NULL));
+		}
+		else {
+			bar->runAction(Sequence::create(FadeIn::create(0.3f),
+				ProgressFromTo::create(0.3f, currentPer, currentPer - deltaPercent),
+				FadeOut::create(0.3f), NULL));
+		}
+	}
+	else {
+		bar->runAction(Sequence::create(FadeIn::create(0.3f),
+			ProgressFromTo::create(0.3f, currentPer, currentPer + deltaPercent),
+			FadeOut::create(0.3f), NULL));
 	}
 }

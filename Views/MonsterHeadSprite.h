@@ -15,7 +15,7 @@ public:
 	bool init();
 	CREATE_FUNC_WITH_STRING(MonsterHeadSprite, name);
 
-	void onHPModified(int deltaValue, float percent);
+	void onHPModified(int deltaValue, float percent, bool isDead);
 private:
 	string _name;
 };

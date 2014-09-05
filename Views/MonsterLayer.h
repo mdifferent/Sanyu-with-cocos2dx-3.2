@@ -27,7 +27,26 @@ public:
 
 	bool init();
 	static MonsterLayer* createWithNames(const map<int, string>*);
+
+	void onMagicMatrixAvailable();
+	void onMagicMatrixUnavailable();
+	void initSpecialAttack(int monsterNo);
+	void onSpecialAttack(float monsterNo);
+	bool isSpecialAttackSuccess();
+
+	void setStatus(MONSTER_LAYER_STATUS status){ _status = status; }
+	MONSTER_LAYER_STATUS getStatus() const { return _status; }
+
+	void onAttacked(int target, int value, float percent, bool isDead);
+
 private:
 	map<int, string> _heads;
+	int _target;
+	bool _isMagicMatrixAvailable;
+	bool _isBubbleFailed;
+	int _BubbleHit;
+	MONSTER_LAYER_STATUS _status;
+
+	Vector<Sprite*> _bubbles;
 };
 #endif

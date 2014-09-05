@@ -11,4 +11,9 @@ static const float BG_FADEIN_TIME = 0.5f;
 
 static const int DEFAULT_DAMAGE_DIGIT = 3;	//初始伤害数字的个数
 
+static const int SPECIAL_ATTACK_DURATION = 10;
+static const int BUBBLE_MAX_COUNT = 10;
+static const int BUBBLE_SPEED = 50;
+static const int BUBBLE_SUCCESS_HIT = 10;
+
 #endif

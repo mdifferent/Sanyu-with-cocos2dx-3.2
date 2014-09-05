@@ -16,3 +16,4 @@ if (pRet && pRet->init()) \
 	return NULL; \
 	} \
 }
+
