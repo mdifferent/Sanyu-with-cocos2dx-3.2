@@ -10,23 +10,34 @@
 #define Sanyu_ConversationScene_h
 
 #include "cocos2d.h"
+#include <string>
+USING_NS_CC;
+using namespace std;
+
+class BackgroundLayer;
+class CharacterLayer;
+class DialogueLayer;
+class TextLayer;
+class ChoiceLayer;
 
 class ConversationScene : public Scene
 {
 public:
     virtual bool init();
-    static ConversationScene* create();
+    CREATE_FUNC(ConversationScene);
     
-    void changeBackground(const string name, Action action);
+    void changeBackground(const string name, ActionInterval *action);
     void changeCharacter(int position, const string name);
     void speaking(const string name, const string text);
     void showChoice(map<int,string> choices);
+    void switchDialogueWindow();
 private:
-    Layer* _bgLayer;
-    Layer* _speakLayer;
-    Layer* _charLayer;
-    Layer* _choiceBtnLayer;
-    Layer* _textLayer;
+    BackgroundLayer* _bgLayer;
+    CharacterLayer* _charLayer;
+    DialogueLayer* _speakLayer;
+    TextLayer* _textLayer;
+    ChoiceLayer* _choiceBtnLayer;
+
 };
 
 #endif
