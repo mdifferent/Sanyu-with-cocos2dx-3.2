@@ -9,7 +9,7 @@ USING_NS_CC_EXT;
 USING_NS_CC;
 using namespace std;
 
-class ListItemCell : public CCTableViewCell
+class ListItemCell : public TableViewCell
 {
 public:
 	ListItemCell(void);
@@ -24,10 +24,10 @@ public:
 	bool isSelected() { return _bg->getOpacity() > 0 ? true : false; }
 
 private:
-	CCLabelTTF *_pItemName;
-	CCLabelTTF *_pTarget;
-	CCLabelTTF *_pAmount;
-	CCNodeRGBA *_bg;
+	LabelTTF *_pItemName;
+	LabelTTF *_pTarget;
+	LabelTTF *_pAmount;
+	NodeRGBA *_bg;
 };
 
 #endif

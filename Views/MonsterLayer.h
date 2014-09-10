@@ -40,6 +40,8 @@ public:
 	void onAttacked(int target, int value, float percent, bool isDead);
 
 private:
+	bool initTouchListener();
+
 	map<int, string> _heads;
 	int _target;
 	bool _isMagicMatrixAvailable;

@@ -1,6 +1,7 @@
 #include "PlayerLayer.h"
 #include "HeadSprite.h"
 #include "Resources.h"
+#include "ConstValues.h"
 
 bool PlayerLayer::init()
 {
@@ -16,10 +17,7 @@ bool PlayerLayer::init()
 		CCLOG("Touch at x:%f,y:%f",touchPos.x,touchPos.y);
 		if (touchPos.y <= this->getChildByTag(0)->getContentSize().height) {
 			for (int i = 0; i < playerCount; i++) {
-				Vec2 startPoint = this->getChildByTag(i)->getAnchorPointInPoints();
-				CCLOG("%d start at x:%f,y:%f", i, startPoint.x, startPoint.y);
-				Size size = this->getChildByTag(i)->getContentSize();
-				Rect rect = Rect(startPoint.x, startPoint.y, size.width, size.height);
+				Rect rect = this->getChildByTag(i)->getBoundingBox();
 				if (rect.containsPoint(touchPos)) {
 					switch (_status) {
 					case WAIT_TARGET:
@@ -53,6 +51,7 @@ bool PlayerLayer::init()
 		float playerY = 0 - playerHeight*0.5;
 		sprite->setPosition(playerX, playerY);
 		addChild(sprite, 0, var.first);
+		PLAYER_HEAD_HEIGHT = sprite->getContentSize().height;
 	}
 
 	auto *atkBtn = MenuItemImage::create(MAINMENU_BTN_ATTACK, MAINMENU_BTN_ATTACK_PRESSED, CC_CALLBACK_1(PlayerLayer::playerAttackCallback, this));

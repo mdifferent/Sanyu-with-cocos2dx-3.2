@@ -7,8 +7,8 @@
 //
 
 #include "ChoiceLayer.h"
+#include "Resources.h"
 
-static const char BUTTON_BG[] = "";
 bool ChoiceLayer::init()
 {
     if (!Layer::init())

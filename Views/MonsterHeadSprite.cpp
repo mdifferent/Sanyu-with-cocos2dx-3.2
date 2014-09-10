@@ -61,3 +61,9 @@ void MonsterHeadSprite::onHPModified(int deltaValue, float deltaPercent, bool is
 			FadeOut::create(0.3f), NULL));
 	}
 }
+
+float MonsterHeadSprite::getHpPercent()
+{
+	ProgressTimer *hpBarTimer = (ProgressTimer*)getChildByName("hpbar");
+	return hpBarTimer->getPercentage();
+}

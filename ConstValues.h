@@ -16,4 +16,7 @@ static const int BUBBLE_MAX_COUNT = 10;
 static const int BUBBLE_SPEED = 50;
 static const int BUBBLE_SUCCESS_HIT = 10;
 
+static float PLAYER_HEAD_HEIGHT = 0.0f;
+static char MAGIC_AVA[] = "magic_ava";
+static char MAGIC_UNAVA[] = "magic_unava";
 #endif

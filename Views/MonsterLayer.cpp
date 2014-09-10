@@ -12,6 +12,7 @@ bool MonsterLayer::init()
 	float screenWidth = Director::getInstance()->getVisibleSize().width;
 	float screenHeight = Director::getInstance()->getVisibleSize().height;
 
+	initTouchListener();
 	for each (pair<int,string> var in _heads) {
 		MonsterHeadSprite *sprite = MonsterHeadSprite::create(var.second);
 		float xpos = screenWidth*0.5 + (var.first - playerCount*0.5 + 0.5)*screenWidth;
@@ -60,6 +61,123 @@ bool MonsterLayer::init()
 	SpriteFrameCache *cache = SpriteFrameCache::getInstance();
 	cache->addSpriteFramesWithFile(BUBBLE_PLIST_PATH, BUBBLE_TEXTURE_PATH);
 
+	return true;
+}
+
+bool MonsterLayer::initTouchListener()
+{
+	auto listener1 = EventListenerTouchOneByOne::create();
+	listener1->setSwallowTouches(true);
+	listener1->onTouchBegan = [this](Touch* touch, Event* event) {
+		if (_status == SLEEP && !_isMagicMatrixAvailable)
+			return false;
+		else if (_isMagicMatrixAvailable) {
+			Point touchPos = touch->getLocation();
+			Rect tagRect = getChildByName("magicTag")->getBoundingBox();
+			if (tagRect.containsPoint(touchPos)) {
+				Sprite* magicPointer = (Sprite*)getChildByName("magicPointer");
+				magicPointer->setScale(1.0f);
+				magicPointer->runAction(CCFadeIn::create(0.1f));
+				setStatus(SPECIAL_ATTACK_PRE);
+				return true;
+			}
+		}
+		if (_status == WAIT_TARGET) {
+			if (touch->getLocationInView().y < PLAYER_HEAD_HEIGHT) {
+				this->setStatus(SLEEP);
+				return false;
+			}
+			else {
+				for each (pair<int, string> var in _heads) {
+					auto monster = getChildByTag(var.first);
+					if (monster->getBoundingBox().containsPoint(touch->getLocationInView())) {
+						MoveBy *pMoveAction = MoveBy::create(0.05f, Vec2(10, 10));
+						monster->runAction(Repeat::create(Sequence::createWithTwoActions(pMoveAction, pMoveAction->reverse()), 4));
+						//this->getChildByTag(var.first)->runAction(MoveTo::create(0.05f, m_originalPos.at(var.first)));
+						this->setStatus(TARGET_SELECTED);
+						CCLOG("Target is %d", var.first);
+						_target = var.first;
+						return false;
+					}
+				}
+			}
+		}
+		else if (_status == SPECIAL_ATTACK) {
+			for each (Sprite* bubble in _bubbles) {
+				Rect bubbleRect = bubble->getBoundingBox();
+				if (bubbleRect.containsPoint(touch->getLocation())) {
+					bubble->stopAllActions();
+					SpriteFrameCache *cache = SpriteFrameCache::getInstance();
+					Animation *breakAnimation = Animation::create();
+					breakAnimation->addSpriteFrame(cache->getSpriteFrameByName("paopao_m6"));
+					breakAnimation->addSpriteFrame(cache->getSpriteFrameByName("paopao_m7"));
+					breakAnimation->addSpriteFrame(cache->getSpriteFrameByName("paopao_m8"));
+					breakAnimation->addSpriteFrame(cache->getSpriteFrameByName("paopao_m9"));
+					breakAnimation->addSpriteFrame(cache->getSpriteFrameByName("paopao_m10"));
+					breakAnimation->setDelayPerUnit(0.1f);
+					breakAnimation->setLoops(1);
+					breakAnimation->setRestoreOriginalFrame(false);
+					bubble->runAction(Sequence::createWithTwoActions(Animate::create(breakAnimation),
+						FadeOut::create(0.1f)));
+					_BubbleHit++;
+					removeChild(bubble, true);
+					ProgressTimer *longHPBar = (ProgressTimer*)getChildByName("hpbar");
+					float currentPercent = longHPBar->getPercentage();
+					longHPBar->runAction(ProgressFromTo::create(0.1f, currentPercent, currentPercent - 10.0));
+					break;
+				}
+			}
+		}
+		return false;
+	};
+	listener1->onTouchMoved = [this](Touch* touch, Event* event) {
+		if (_status == SPECIAL_ATTACK_PRE) {
+			if (touch->getLocation() == touch->getPreviousLocation())
+				return;
+			Sprite* magicPointer = (Sprite*)getChildByName("magicPointer");
+			magicPointer->setPosition(touch->getLocation());
+			for each (pair<int,string> var in _heads) {
+				MonsterHeadSprite *monster = (MonsterHeadSprite*)getChildByTag(var.first);
+				if (monster->getBoundingBox().containsPoint(touch->getLocation())) {
+					if (monster->getHpPercent() > 0.3)
+						continue;
+					else {
+						magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_AVA));
+						magicPointer->runAction(RepeatForever::create(RotateBy::create(0.5, 90.0)));
+						return;
+					}
+				}
+			}
+			magicPointer->cleanup();
+			magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_UNAVA));
+		}
+	};
+	listener1->onTouchEnded = [this](Touch* touch, Event* event) {
+		if (_status == SPECIAL_ATTACK_PRE) {
+			Sprite* magicPointer = (Sprite*)getChildByName("magicPointer");
+			magicPointer->setPosition(touch->getLocation());
+			for each (pair<int, string> var in _heads) {
+				MonsterHeadSprite *monster = (MonsterHeadSprite*)getChildByTag(var.first);
+				if (monster->getBoundingBox().containsPoint(touch->getLocation())) {
+					if (monster->getHpPercent() > 0.3)
+						continue;
+					else {
+						magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_AVA));
+						initSpecialAttack(var.first);
+						CCLOG("Target is %d", var.first);
+						_target = var.first;
+						setStatus(SPECIAL_ATTACK);
+						return;
+					}
+				}
+			}
+			magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_UNAVA));
+			magicPointer->runAction(Sequence::create(
+				Spawn::create(MoveTo::create(0.2f, Vec2(750, 550)), ScaleTo::create(0.2f, 0.5), NULL),
+				FadeOut::create(0.1f), NULL));
+			this->setStatus(WAIT_TARGET);
+		}
+	};
 	return true;
 }
 
@@ -135,7 +253,7 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 	float leftBorder = middlePoint.x - monsterSize.width*0.5;
 	float rightBorder = middlePoint.x + monsterSize.width*0.5;
 
-	//initRandomSeed();
+	//initRandomSeed
 	struct timeval psv;
 	gettimeofday(&psv, NULL);
 	unsigned long int rand_seed = psv.tv_sec * 1000 + psv.tv_usec / 1000;
