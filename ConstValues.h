@@ -19,4 +19,6 @@ static const int BUBBLE_SUCCESS_HIT = 10;
 static float PLAYER_HEAD_HEIGHT = 0.0f;
 static char MAGIC_AVA[] = "magic_ava";
 static char MAGIC_UNAVA[] = "magic_unava";
+
+static const int TOP_HP = 999;
 #endif

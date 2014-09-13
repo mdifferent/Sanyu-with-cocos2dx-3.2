@@ -15,7 +15,7 @@ namespace listdata {
 	public:
 		AbstractListItemData(int id, string name, TargetType target, bool multi)
 			:_id(id), _name(name), _targetType(target), _isMultiTarget(multi) {}
-		virtual ~AbstractListItemData() {}
+		~AbstractListItemData() {}
 
 		string getName() const { return _name; }
 		TargetType getTargetType() const { return _targetType; }

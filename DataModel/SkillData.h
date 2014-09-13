@@ -17,7 +17,6 @@ namespace listdata
 	public:
 		SkillData(int id, string name, TargetType target, bool multi, int cost, SKILL_TYPE type)
 			:AbstractListItemData(id, name, target, multi), _cost(cost), _type(type) {}
-		~SkillData(){}
 
 		SKILL_TYPE getSkillType() const { return _type; }
 		int getCost() const { return _cost; }

@@ -4,6 +4,8 @@
 #include "PlayerLayer.h"
 #include "MonsterLayer.h"
 #include "ListLayer.h"
+#include "ConstValues.h"
+#include "../DataModel/InstanceDatabase.h"
 
 BattleFieldScene::~BattleFieldScene()
 {
@@ -87,7 +89,257 @@ bool BattleFieldScene::init()
 
 void BattleFieldScene::updateGame(float ft)
 {
+	switch (_roundOwner) {
+	case PLAYER:
+		runPlayerRound();
+		break;
+	case COMPUTER:
+		runComputerRound();
+	}
+	if (checkRoundFinished())
+		switchOwner();
+}
 
+void BattleFieldScene::runPlayerRound()
+{
+	bool isMagicMatrixAva = false;
+	for (int i = 0; i<_data->getMonsterCount(); i++) {
+		int current = _data->getMonsterProperty(i, battledata::CURRENT_HP);
+		int max = _data->getMonsterProperty(i, battledata::MAX_HP)*0.3;
+		if (current < max && _data->getMonsterStatusAt(i) != DEAD) {
+			isMagicMatrixAva = true;
+			_monsterLayer->onMagicMatrixAvailable();
+			break;
+		}
+	}
+	if (!isMagicMatrixAva)
+		_monsterLayer->onMagicMatrixUnavailable();
+	MonsterLayer::MONSTER_LAYER_STATUS monsterStatus = _monsterLayer->getStatus();
+	PlayerLayer::PLAYER_LAYER_STATUS playerStatus = _playerLayer->getStatus();
+
+	//Init status
+	if (playerStatus == PlayerLayer::WAIT_TARGET && monsterStatus == MonsterLayer::SLEEP) {
+		_monsterLayer->resetTarget();
+		_playerLayer->resetSelectedMenu();
+		_playerLayer->resetSelectedPlayer();
+		_playerLayer->resetTarget();
+		CCLOG("Monster:sleep, Player: wait");
+		return;
+	}
+	//Open menu
+	if (playerStatus == PlayerLayer::MENU_OPEN && monsterStatus == MonsterLayer::SLEEP) {
+		_playerLayer->resetSelectedMenu();
+		switchList(false);
+		return;
+	}
+	
+	//Select command
+	if (playerStatus == PlayerLayer::MENU_SELECTED && monsterStatus == MonsterLayer::SLEEP) {
+		PlayerLayer::PLAYER_CMD playerCmd = _playerLayer->getSelectedMenu();
+		if (playerCmd == PlayerLayer::ATTACK) {
+			_monsterLayer->resetTarget();
+			_monsterLayer->setStatus(MonsterLayer::WAIT_TARGET);
+		}
+		else if (playerCmd == PlayerLayer::ITEM || playerCmd == PlayerLayer::SKILL) {
+			if (playerCmd == PlayerLayer::ITEM)
+				_listLayer->setContentType(ITEM_LIST);
+			else
+				_listLayer->setContentType(SKILL_LIST);
+			switchList(true); //Open select list
+		}
+		else if (playerCmd == PlayerLayer::GUARD || playerCmd == PlayerLayer::ESCAPE) {
+			_monsterLayer->setStatus(MonsterLayer::SLEEP);
+			if (playerCmd == PlayerLayer::GUARD)
+				_data->setPlayerStatusAt(_playerLayer->getSelectedPlayer(), battledata::DEFENSE);
+			_playerFinishFlag[_playerLayer->getSelectedPlayer()] = true;
+		}
+		return;
+	}
+	//Attack
+	if (playerStatus == PlayerLayer::MENU_SELECTED && _playerLayer->getSelectedMenu() == PlayerLayer::ATTACK) {
+		if (monsterStatus == MonsterLayer::WAIT_TARGET) {
+			if (_playerLayer->getStatus() == PlayerLayer::MENU_OPEN) {
+				_playerLayer->resetSelectedMenu();
+				_monsterLayer->setStatus(MonsterLayer::SLEEP);
+			}
+		}
+		else if (monsterStatus == MonsterLayer::TARGET_SELECTED) {
+			int attackTarget = _monsterLayer->getTarget();
+			int attackSource = _playerLayer->getSelectedPlayer();
+			int attackValue = _data->getPlayerProperty(attackSource, battledata::MELEE_ATTACK);
+			int defenseValue = _data->getMonsterProperty(attackTarget, MELEE_DEFENSE);
+			int damage = attackValue - defenseValue;
+			int monsterCurrentHP = _data->getMonsterProperty(attackTarget, battledata::CURRENT_HP);
+			int monsteMaxHP = _data->getMonsterProperty(attackTarget, battledata::MAX_HP);
+			//TODO:BUFF and DEBUFF may be considered in the futrue
+			if (monsterCurrentHP <= damage) {
+				_data->setMonsterStatusAt(attackTarget, DEAD);
+				_data->setMonsterProperty(attackTarget, battledata::CURRENT_HP, 0);
+				_monsterLayer->onAttacked(attackTarget, -damage, (damage / monsteMaxHP) * 100.0f, true);
+			}
+			else {
+				_data->setMonsterProperty(attackTarget, battledata::CURRENT_HP, monsterCurrentHP - damage);
+				_monsterLayer->onAttacked(attackTarget, -damage, (damage / monsteMaxHP) * 100.0f, false);
+			}
+			//CCLOG("Remain HP:%d", m_data->getMonster(iAttackTarget)->getProperty(CURRENT_HP));
+			_data->setPlayerStatusAt(attackSource, FINISHED);
+			_playerFinishFlag[attackSource] = true;
+			_monsterLayer->setStatus(MonsterLayer::SLEEP);
+			_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
+		}
+		return;
+	}
+	/*
+	//Item & Skill 
+	//For enemy
+	if (playerStatus == PlayerLayer::MENU_SELECTED && monsterStatus == MonsterLayer::TARGET_SELECTED) {
+		int iAttackSource = _playerLayer->getSelectedPlayer();
+		if (_playerLayer->getSelectedMenu() == PlayerLayer::ITEM) {
+			effectOnMonsters(InstanceDatabase::getDatabaseInstance()->getItemById(getSelectedItemId()));
+		}
+		else if (_playerLayer->getSelectedMenu() == PlayerLayer::SKILL) {
+			int iSkillId = getSelectedItemId();
+			SkillData *pData = InstanceDatabase::getDatabaseInstance().getSkillById(iSkillId);
+			int iCost = pData->getCost();
+			int iCurrentSP = _data->getPlayer(iAttackSource)->getProperty(CURRENT_SP);
+			if (iCost <= iCurrentSP) {
+				effectOnMonsters(pData);
+				_data->getPlayer(iAttackSource)->setProperty(CURRENT_SP, iCurrentSP - iCost);
+				_playerLayer->onPlayerPropModified(CURRENT_SP, iAttackSource, 0 - iCost);
+			}
+			else
+				CCLOG("No enough SP");
+		}
+		_data->getPlayer(iAttackSource)->setStatus(FINISHED);
+		_playerFinishFlag[iAttackSource] = true;
+		_monsterLayer->setStatus(MonsterLayer::SLEEP);
+		_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
+		return;
+	}
+	//For friend
+	if (playerStatus == PlayerLayer::TARGET_SELECTED && monsterStatus == MonsterLayer::SLEEP) {
+		int iOperationSource = _playerLayer->getSelectedPlayer();
+		int iTargetPlayer = _playerLayer->getTarget();
+		int iCurrentHP = _data->getPlayer(iTargetPlayer)->getProperty(CURRENT_HP);
+		int iMaxHP = _data->getPlayer(iTargetPlayer)->getProperty(MAX_HP);
+		int iCurrentSP = m_data->getPlayer(iTargetPlayer)->getProperty(CURRENT_SP);
+		int iMaxSP = m_data->getPlayer(iTargetPlayer)->getProperty(MAX_SP);
+		int iItemId = getSelectedItemId();
+		AbstractListItemData *itemData = NULL;
+		if (m_playerLayer->getSelectedMenu() == PlayerLayer::ITEM)
+			itemData = InstanceDatabase::getDatabaseInstance()->getItemById(iItemId);
+		else if (m_playerLayer->getSelectedMenu() == PlayerLayer::SKILL)
+			itemData = InstanceDatabase::getDatabaseInstance()->getSkillById(iItemId);
+		if (itemData == NULL) {
+			CCLOG("Get item/skill data error!");
+			return;
+		}
+		map<AbstractListItemData::EffectAttribute, int> effect = itemData->getItemEffects();
+		map<AbstractListItemData::EffectAttribute, int>::iterator effIter = effect.begin();
+		while (effIter != effect.end()) {
+			switch (effIter->first) {
+			case AbstractListItemData::CURRENT_HP:
+				if (iCurrentHP + effIter->second > iMaxHP)
+					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_HP, iMaxHP);
+				else
+					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_HP, iCurrentHP + effIter->second);
+				m_playerLayer->onPlayerPropModified(CURRENT_HP, iTargetPlayer, effIter->second);
+				break;
+			case AbstractListItemData::CURRENT_SP:
+				if (iCurrentSP + effIter->second > iMaxSP)
+					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_SP, iMaxSP);
+				else
+					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_SP, iCurrentSP + effIter->second);
+				m_playerLayer->onPlayerPropModified(CURRENT_SP, iTargetPlayer, effIter->second);
+				break;
+			};
+			effIter++;
+		}
+		m_data->getPlayer(iOperationSource)->setStatus(FINISHED);				//Target conflict with source
+		m_isPlayerFinished[iOperationSource] = true;
+		_monsterLayer->setStatus(MonsterLayer::SLEEP);
+		_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
+		return;
+	}
+	if (monsterStatus == MonsterLayer::SPECIAL_ATTACK) {
+		CCLOG("Special Attack");
+		_playerLayer->beforeSpecialAttack();
+		return;
+	}
+	if (monsterStatus == MonsterLayer::SPECIAL_ATTACK_FINISHED) {
+		CCLOG("Special Attack Finished");
+		if (_monsterLayer->isBubbleFailed()) {
+			int currentHP = m_data->getPlayer(0)->getProperty(CURRENT_HP);
+			int maxHP = m_data->getPlayer(0)->getProperty(MAX_HP);
+			float damage = maxHP * 0.05;
+			if (damage > currentHP) {
+				_data->getPlayer(0)->setStatus(DEAD);
+				_data->getPlayer(0)->setProperty(CURRENT_HP, 0);
+				_playerLayer->onPlayerKilled(0);
+			}
+			else {
+				_data->getPlayer(0)->setProperty(CURRENT_HP, currentHP - damage);
+				_playerLayer->onPlayerPropModified(CURRENT_HP, 0, -damage);
+			}
+		}
+		_playerLayer->afterSpecialAttack();
+		_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
+		_monsterLayer->setStatus(MonsterLayer::SLEEP);
+		return;
+	}*/
+	return;
+}
+
+void BattleFieldScene::runComputerRound()
+{
+	CCLOG("COMPUTER ROUND");
+	int mosnterCount = _data->getPlayerCount();
+	int playerCount = _data->getMonsterCount();
+	int attackTarget = -1;
+	int iMinHP = TOP_HP;
+	for (int i = 0; i<mosnterCount; i++) {
+		CCLOG("Monster %d", i);
+		if (_data->getMonsterStatusAt(i) != DEAD) {
+			for (int j = 0; j<playerCount; j++) {
+				if (_data->getPlayerStatusAt(j) != DEAD && 
+					_data->getPlayerProperty(j, battledata::CURRENT_HP)< iMinHP ) {
+					iMinHP = _data->getPlayerProperty(j, battledata::CURRENT_HP);
+					attackTarget = j;
+				}
+			}
+			int defenseValue = _data->getPlayerProperty(attackTarget, MELEE_DEFENSE);
+			int attackValue = _data->getMonsterProperty(i, battledata::MELEE_ATTACK);
+			int damageValue = _data->getPlayerStatusAt(attackTarget) == battledata::DEFENSE ? attackValue - defenseValue : attackValue;
+			int playerCurrentHP = _data->getPlayerProperty(attackTarget, battledata::CURRENT_HP);
+			_playerLayer->onPlayerPropModified(1, attackTarget, damageValue);
+			if (damageValue >= playerCurrentHP) {
+				_data->setPlayerProperty(attackTarget, battledata::CURRENT_HP, 0);
+				_data->setPlayerStatusAt(attackTarget, DEAD);
+			}
+			else {
+				_data->setPlayerProperty(attackTarget, battledata::CURRENT_HP, playerCurrentHP - damageValue);
+			}
+			_data->setMonsterStatusAt(i, battledata::BATTLER_STATUS::FINISHED);
+			_monsterFinishFlag[i] = true;
+		}
+	}
+}
+
+bool BattleFieldScene::checkRoundFinished() {
+	bool res = true;
+	if (_roundOwner == PLAYER) {
+		int iPlayerCount = _playerFinishFlag.size();
+		for (int i = 0; i<iPlayerCount; i++)
+		if (_playerFinishFlag[i] == false)		//False = haven't run action
+			res = false;
+	}
+	else if (_roundOwner == COMPUTER) {
+		int iMonsterCount = _monsterFinishFlag.size();
+		for (int i = 0; i<iMonsterCount; i++)
+		if (_monsterFinishFlag[i] == false)
+			res = false;
+	}
+	return res;
 }
 
 TableViewCell* BattleFieldScene::tableCellAtIndex(TableView *table, ssize_t idx)
@@ -96,3 +348,8 @@ TableViewCell* BattleFieldScene::tableCellAtIndex(TableView *table, ssize_t idx)
 }
 ssize_t BattleFieldScene::numberOfCellsInTableView(TableView *table){ return 0; }
 void BattleFieldScene::tableCellTouched(TableView* table, TableViewCell* cell){}
+
+void BattleFieldScene::switchList(bool isOpen) {
+	_listLayer->setTouchEnabled(isOpen);
+	_listLayer->setVisible(isOpen);
+}

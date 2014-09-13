@@ -32,16 +32,16 @@ namespace battledata
 	class AbstractBattlerData
 	{
 	public:
-		AbstractBattlerData(string name);
-		AbstractBattlerData(const AbstractBattlerData &data);
-		~AbstractBattlerData(void) {};
+		AbstractBattlerData(string name) :_name(name) {}
+		AbstractBattlerData(const AbstractBattlerData &data) :_name(data.getName()), _status(data.getStatus()){}
+		~AbstractBattlerData(void) {}
 
 		const string getName() const { return _name; }
 		const BATTLER_STATUS getStatus() const { return _status; }
 		void setStatus(const BATTLER_STATUS status) { _status = status; }
 
-		void setProperty(const PLAYER_PROP_TYPE, const int);
-		int getProperty(const PLAYER_PROP_TYPE) const;
+		void setProperty(const PLAYER_PROP_TYPE pro, const int value) { _properties[pro] = value; }
+		int getProperty(const PLAYER_PROP_TYPE pro) const { return _properties.at(pro); }
 
 	private:
 		string _name;

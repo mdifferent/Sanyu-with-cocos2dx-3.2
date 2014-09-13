@@ -33,7 +33,8 @@ public:
 	void initSpecialAttack(int monsterNo);
 	void onSpecialAttack(float monsterNo);
 	bool isSpecialAttackSuccess();
-
+	void resetTarget() { _target = -1; }
+	int getTarget() { return _target; }
 	void setStatus(MONSTER_LAYER_STATUS status){ _status = status; }
 	MONSTER_LAYER_STATUS getStatus() const { return _status; }
 

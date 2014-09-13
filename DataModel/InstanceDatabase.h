@@ -3,12 +3,10 @@
 
 #include <map>
 #include <list>
-
+#include "SkillData.h"
+#include "ItemData.h"
 using namespace std;
-
-class SkillData;
-class ItemData;
-
+using namespace listdata;
 class InstanceDatabase
 {
 public:
@@ -25,7 +23,7 @@ private:
 	~InstanceDatabase(){};
 
 	static InstanceDatabase*		instance;
-	map<int, SkillData*>			m_skillDataset;
-	map<int, ItemData*>				m_itemDataset;
+	map<int, SkillData*>			_skillDataset;
+	map<int, ItemData*>				_itemDataset;
 };
 #endif

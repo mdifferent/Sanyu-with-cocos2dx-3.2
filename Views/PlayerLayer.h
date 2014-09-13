@@ -7,28 +7,29 @@
 using namespace std;
 USING_NS_CC;
 
-enum PLAYER_LAYER_STATUS {
-	WAIT_COMMAND,
-	MENU_OPEN,
-	MENU_SELECTED,
-	WAIT_TARGET,
-	TARGET_SELECTED,
-	FINISHED
-};
 
-
-enum PLAYER_CMD {
-	NONE,
-	ATTACK,
-	SKILL,
-	GUARD,
-	ITEM,
-	ESCAPE
-};
 
 class PlayerLayer : public Layer
 {
 public:
+	enum PLAYER_CMD {
+		NONE,
+		ATTACK,
+		SKILL,
+		GUARD,
+		ITEM,
+		ESCAPE
+	};
+
+	enum PLAYER_LAYER_STATUS {
+		WAIT_COMMAND,
+		MENU_OPEN,
+		MENU_SELECTED,
+		WAIT_TARGET,
+		TARGET_SELECTED,
+		FINISHED
+	};
+
 	PlayerLayer(const map<int, string>* names) { _heads = *names; }
 	~PlayerLayer() { delete &_heads; }
 

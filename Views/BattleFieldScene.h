@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include "cocos-ext.h"
 #include "../DataModel/BattleData.h"
+#include "../DataModel/AbstractListItemData.h"
 
 USING_NS_CC;
 USING_NS_CC_EXT;
@@ -35,6 +36,17 @@ public:
 	ssize_t numberOfCellsInTableView(TableView *table);
 	void tableCellTouched(TableView* table, TableViewCell* cell);
 
+	int getSelectedItemId() { return _selectedListItemId; }
+
+private:
+	void runPlayerRound();
+	void runComputerRound();
+	bool checkRoundFinished();
+	void switchOwner();
+	void switchList(bool isOpen);
+	void effectOnMonsters(AbstractListItemData *pEffectSource);
+	void effectOnMonster(int monsterNo, AbstractListItemData *pEffectSource);
+
 private:
 	int							_sceneId;
 	battledata::BattleData*		_data;
@@ -45,6 +57,8 @@ private:
 	PlayerLayer*				_playerLayer;
 	MonsterLayer*				_monsterLayer;
 	ListLayer*					_listLayer;
+
+	int _selectedListItemId;
 
 	map<int, bool> _playerFinishFlag;
 	map<int, bool> _monsterFinishFlag;
