@@ -16,8 +16,8 @@ public:
 	bool initSkillSetByIds(list<int>);
 	bool initItemSetByIds(list<int>);
 
-	SkillData& getSkillById(int id);
-	ItemData& getItemById(int id);
+	AbstractListItemData& getSkillById(int id);
+	AbstractListItemData& getItemById(int id);
 private:
 	InstanceDatabase(){};
 	~InstanceDatabase(){};

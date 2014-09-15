@@ -62,4 +62,7 @@ static const char DIGIT_PNG_PATH[] = "images/number.png";
 //Conversation mode
 static const char BUTTON_BG[] = "";
 
+//Select list
+static const char SELECT_LIST_BG_PATH[] = "images/selectback.png";
+
 #endif

@@ -25,12 +25,12 @@ void InstanceDatabase::releaseDatabase() {
 	instance = NULL;
 }
 
-SkillData& InstanceDatabase::getSkillById(int id) {
+AbstractListItemData& InstanceDatabase::getSkillById(int id) {
 	if (instance->_skillDataset.find(id) != instance->_skillDataset.end())
 		return *instance->_skillDataset.at(id);
 }
 
-ItemData& InstanceDatabase::getItemById(int id) {
+AbstractListItemData& InstanceDatabase::getItemById(int id) {
 	if (instance->_itemDataset.find(id) != instance->_itemDataset.end())
 		return *instance->_itemDataset.at(id);
 }

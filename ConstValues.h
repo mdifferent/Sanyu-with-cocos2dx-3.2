@@ -21,4 +21,10 @@ static char MAGIC_AVA[] = "magic_ava";
 static char MAGIC_UNAVA[] = "magic_unava";
 
 static const int TOP_HP = 999;
+
+static const char SKILL_TITLE[] = "SKILL SELECT";
+static const char ITEM_TITLE[] = "ITEM SELECT";
+static const float BACK_WIDTH = 461;
+static const float BACK_HEIGHT = 327;
+static const float BACK_LABEL_HEIGHT = 24;
 #endif

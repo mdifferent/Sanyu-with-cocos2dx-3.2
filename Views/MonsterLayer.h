@@ -37,6 +37,7 @@ public:
 	int getTarget() { return _target; }
 	void setStatus(MONSTER_LAYER_STATUS status){ _status = status; }
 	MONSTER_LAYER_STATUS getStatus() const { return _status; }
+	bool isBubbleFailed() const { return _isBubbleFailed; }
 
 	void onAttacked(int target, int value, float percent, bool isDead);
 

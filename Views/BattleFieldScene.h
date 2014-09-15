@@ -8,6 +8,7 @@
 
 USING_NS_CC;
 USING_NS_CC_EXT;
+using namespace listdata;
 
 class BattleData;
 class BackgroundLayer;
@@ -44,8 +45,8 @@ private:
 	bool checkRoundFinished();
 	void switchOwner();
 	void switchList(bool isOpen);
-	void effectOnMonsters(AbstractListItemData *pEffectSource);
-	void effectOnMonster(int monsterNo, AbstractListItemData *pEffectSource);
+	void effectOnMonsters(AbstractListItemData& pEffectSource);
+	void effectOnMonster(int monsterNo, AbstractListItemData& pEffectSource);
 
 private:
 	int							_sceneId;

@@ -189,29 +189,29 @@ void BattleFieldScene::runPlayerRound()
 		}
 		return;
 	}
-	/*
+	
 	//Item & Skill 
 	//For enemy
 	if (playerStatus == PlayerLayer::MENU_SELECTED && monsterStatus == MonsterLayer::TARGET_SELECTED) {
-		int iAttackSource = _playerLayer->getSelectedPlayer();
+		int attackSource = _playerLayer->getSelectedPlayer();
 		if (_playerLayer->getSelectedMenu() == PlayerLayer::ITEM) {
 			effectOnMonsters(InstanceDatabase::getDatabaseInstance()->getItemById(getSelectedItemId()));
 		}
 		else if (_playerLayer->getSelectedMenu() == PlayerLayer::SKILL) {
 			int iSkillId = getSelectedItemId();
-			SkillData *pData = InstanceDatabase::getDatabaseInstance().getSkillById(iSkillId);
-			int iCost = pData->getCost();
-			int iCurrentSP = _data->getPlayer(iAttackSource)->getProperty(CURRENT_SP);
+			SkillData pData = (SkillData&)InstanceDatabase::getDatabaseInstance()->getSkillById(iSkillId);
+			int iCost = pData.getCost();
+			int iCurrentSP = _data->getPlayerProperty(attackSource, battledata::CURRENT_SP);
 			if (iCost <= iCurrentSP) {
 				effectOnMonsters(pData);
-				_data->getPlayer(iAttackSource)->setProperty(CURRENT_SP, iCurrentSP - iCost);
-				_playerLayer->onPlayerPropModified(CURRENT_SP, iAttackSource, 0 - iCost);
+				_data->setPlayerProperty(attackSource, battledata::CURRENT_SP, iCurrentSP - iCost);
+				_playerLayer->onPlayerPropModified(battledata::CURRENT_SP, 0-attackSource, 0 - iCost);
 			}
 			else
 				CCLOG("No enough SP");
 		}
-		_data->getPlayer(iAttackSource)->setStatus(FINISHED);
-		_playerFinishFlag[iAttackSource] = true;
+		_data->setPlayerStatusAt(attackSource, FINISHED);
+		_playerFinishFlag[attackSource] = true;
 		_monsterLayer->setStatus(MonsterLayer::SLEEP);
 		_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
 		return;
@@ -220,43 +220,43 @@ void BattleFieldScene::runPlayerRound()
 	if (playerStatus == PlayerLayer::TARGET_SELECTED && monsterStatus == MonsterLayer::SLEEP) {
 		int iOperationSource = _playerLayer->getSelectedPlayer();
 		int iTargetPlayer = _playerLayer->getTarget();
-		int iCurrentHP = _data->getPlayer(iTargetPlayer)->getProperty(CURRENT_HP);
-		int iMaxHP = _data->getPlayer(iTargetPlayer)->getProperty(MAX_HP);
-		int iCurrentSP = m_data->getPlayer(iTargetPlayer)->getProperty(CURRENT_SP);
-		int iMaxSP = m_data->getPlayer(iTargetPlayer)->getProperty(MAX_SP);
+		int iCurrentHP = _data->getPlayerProperty(iTargetPlayer, battledata::CURRENT_HP);
+		int iMaxHP = _data->getPlayerProperty(iTargetPlayer, battledata::MAX_HP);
+		int iCurrentSP = _data->getPlayerProperty(iTargetPlayer, battledata::CURRENT_SP);
+		int iMaxSP = _data->getPlayerProperty(iTargetPlayer, battledata::MAX_SP);
 		int iItemId = getSelectedItemId();
 		AbstractListItemData *itemData = NULL;
-		if (m_playerLayer->getSelectedMenu() == PlayerLayer::ITEM)
-			itemData = InstanceDatabase::getDatabaseInstance()->getItemById(iItemId);
-		else if (m_playerLayer->getSelectedMenu() == PlayerLayer::SKILL)
-			itemData = InstanceDatabase::getDatabaseInstance()->getSkillById(iItemId);
+		if (_playerLayer->getSelectedMenu() == PlayerLayer::ITEM)
+			itemData = &InstanceDatabase::getDatabaseInstance()->getItemById(iItemId);
+		else if (_playerLayer->getSelectedMenu() == PlayerLayer::SKILL)
+			itemData = &InstanceDatabase::getDatabaseInstance()->getSkillById(iItemId);
 		if (itemData == NULL) {
 			CCLOG("Get item/skill data error!");
 			return;
 		}
-		map<AbstractListItemData::EffectAttribute, int> effect = itemData->getItemEffects();
-		map<AbstractListItemData::EffectAttribute, int>::iterator effIter = effect.begin();
+		map<listdata::EffectAttribute, int> effect = itemData->getItemEffects();
+		map<listdata::EffectAttribute, int>::iterator effIter = effect.begin();
 		while (effIter != effect.end()) {
 			switch (effIter->first) {
-			case AbstractListItemData::CURRENT_HP:
+			case listdata::CURRENT_HP:
 				if (iCurrentHP + effIter->second > iMaxHP)
-					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_HP, iMaxHP);
+					_data->setPlayerProperty(iTargetPlayer, battledata::CURRENT_HP, iMaxHP);
 				else
-					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_HP, iCurrentHP + effIter->second);
-				m_playerLayer->onPlayerPropModified(CURRENT_HP, iTargetPlayer, effIter->second);
+					_data->setPlayerProperty(iTargetPlayer, battledata::CURRENT_HP, iCurrentHP + effIter->second);
+				_playerLayer->onPlayerPropModified(battledata::CURRENT_HP, iTargetPlayer, effIter->second);
 				break;
-			case AbstractListItemData::CURRENT_SP:
+			case listdata::CURRENT_SP:
 				if (iCurrentSP + effIter->second > iMaxSP)
-					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_SP, iMaxSP);
+					_data->setPlayerProperty(iTargetPlayer, battledata::CURRENT_SP, iMaxSP);
 				else
-					m_data->getPlayer(iTargetPlayer)->setProperty(CURRENT_SP, iCurrentSP + effIter->second);
-				m_playerLayer->onPlayerPropModified(CURRENT_SP, iTargetPlayer, effIter->second);
+					_data->setPlayerProperty(iTargetPlayer, battledata::CURRENT_SP, iCurrentSP + effIter->second);
+				_playerLayer->onPlayerPropModified(battledata::CURRENT_SP, iTargetPlayer, effIter->second);
 				break;
 			};
 			effIter++;
 		}
-		m_data->getPlayer(iOperationSource)->setStatus(FINISHED);				//Target conflict with source
-		m_isPlayerFinished[iOperationSource] = true;
+		_data->setPlayerStatusAt(iOperationSource, FINISHED);				//Target conflict with source
+		_playerFinishFlag[iOperationSource] = true;
 		_monsterLayer->setStatus(MonsterLayer::SLEEP);
 		_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
 		return;
@@ -269,24 +269,23 @@ void BattleFieldScene::runPlayerRound()
 	if (monsterStatus == MonsterLayer::SPECIAL_ATTACK_FINISHED) {
 		CCLOG("Special Attack Finished");
 		if (_monsterLayer->isBubbleFailed()) {
-			int currentHP = m_data->getPlayer(0)->getProperty(CURRENT_HP);
-			int maxHP = m_data->getPlayer(0)->getProperty(MAX_HP);
+			int currentHP = _data->getPlayerProperty(0, battledata::CURRENT_HP);
+			int maxHP = _data->getPlayerProperty(0, battledata::MAX_HP);
 			float damage = maxHP * 0.05;
 			if (damage > currentHP) {
-				_data->getPlayer(0)->setStatus(DEAD);
-				_data->getPlayer(0)->setProperty(CURRENT_HP, 0);
-				_playerLayer->onPlayerKilled(0);
+				_data->setPlayerStatusAt(0, DEAD);
+				_data->setPlayerProperty(0, battledata::CURRENT_HP, 0);
 			}
 			else {
-				_data->getPlayer(0)->setProperty(CURRENT_HP, currentHP - damage);
-				_playerLayer->onPlayerPropModified(CURRENT_HP, 0, -damage);
+				_data->setPlayerProperty(0, battledata::CURRENT_HP, currentHP - damage);
 			}
+			_playerLayer->onPlayerPropModified(battledata::CURRENT_HP, 0, -damage);
 		}
 		_playerLayer->afterSpecialAttack();
 		_playerLayer->setStatus(PlayerLayer::WAIT_COMMAND);
 		_monsterLayer->setStatus(MonsterLayer::SLEEP);
 		return;
-	}*/
+	}
 	return;
 }
 
@@ -352,4 +351,72 @@ void BattleFieldScene::tableCellTouched(TableView* table, TableViewCell* cell){}
 void BattleFieldScene::switchList(bool isOpen) {
 	_listLayer->setTouchEnabled(isOpen);
 	_listLayer->setVisible(isOpen);
+}
+
+void BattleFieldScene::effectOnMonsters(AbstractListItemData& pEffectSource)
+{
+	if (pEffectSource.getMultiTarget()) {
+		int monsterCount = _data->getMonsterCount();
+		for (size_t i = 0; i < monsterCount; i++) {
+			if (_data->getMonsterStatusAt(i) != DEAD) {
+				effectOnMonster(i, pEffectSource);
+			}
+		}
+	}
+	else {
+		int attackTarget = _monsterLayer->getTarget();
+		effectOnMonster(attackTarget, pEffectSource);
+	}
+}
+
+void BattleFieldScene::effectOnMonster(int monsterNo, AbstractListItemData& pEffectSource)
+{
+	map<listdata::EffectAttribute, int> effect = pEffectSource.getItemEffects();
+	map<listdata::EffectAttribute, int>::iterator effIter = effect.begin();
+	int monsterCurrentHP = _data->getMonsterProperty(monsterNo, battledata::CURRENT_HP);
+	int monsterMaxHP = _data->getMonsterProperty(monsterNo, battledata::MAX_HP);
+	while (effIter != effect.end()) {
+		switch (effIter->first) {
+		case battledata::CURRENT_HP: 
+			if (monsterCurrentHP <= effIter->second) {
+				_data->setMonsterStatusAt(monsterNo,DEAD);
+				_data->setMonsterProperty(monsterNo, battledata::CURRENT_HP, 0);
+				_monsterLayer->onAttacked(monsterNo, 0 - effIter->second, (effIter->second / monsterMaxHP)*100.0f, true);
+			}
+			else {
+				_data->setMonsterProperty(monsterNo, battledata::CURRENT_HP, monsterCurrentHP - effIter->second);
+				_monsterLayer->onAttacked(monsterNo, 0 - effIter->second, (effIter->second / monsterMaxHP)*100.0f, false);
+			}
+			break;
+		case battledata::CURRENT_SP:
+			//TODO:Other effects
+			break;
+		}
+		effIter++;
+	}
+}
+
+void BattleFieldScene::switchOwner() {
+	if (_roundOwner == PLAYER) {
+		map<int, bool>::iterator it = _monsterFinishFlag.begin();
+		while (it != _monsterFinishFlag.end()) {
+			if (_data->getMonsterStatusAt(it->first) == DEAD)
+				it->second = true;
+			else
+				it->second = false;
+			it++;
+		}
+		_roundOwner = COMPUTER;
+	}
+	else if (_roundOwner == COMPUTER) {
+		map<int, bool>::iterator it = _playerFinishFlag.begin();
+		while (it != _playerFinishFlag.end()) {
+			if (_data->getPlayerStatusAt(it->first) == DEAD)
+				it->second = true;
+			else
+				it->second = false;
+			it++;
+		}
+		_roundOwner = PLAYER;
+	}
 }

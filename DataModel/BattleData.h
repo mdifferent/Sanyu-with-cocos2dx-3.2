@@ -45,8 +45,8 @@ namespace battledata {
 		int getPlayerCount() { return _players.size(); }
 		int getMonsterCount() { return _monsters.size(); }
 
-		int getPlayerProperty(int i, PLAYER_PROP_TYPE prop);
-		int getMonsterProperty(int i, PLAYER_PROP_TYPE prop);
+		int getPlayerProperty(int i, PLAYER_PROP_TYPE prop) { return _players.at(i)->getProperty(prop); }
+		int getMonsterProperty(int i, PLAYER_PROP_TYPE prop) { return _monsters.at(i)->getProperty(prop); }
 		BATTLER_STATUS getPlayerStatusAt(int num) const { return _players.at(num)->getStatus(); }
 		BATTLER_STATUS getMonsterStatusAt(int num) const { return _monsters.at(num)->getStatus(); }
 		void setPlayerStatusAt(int num, BATTLER_STATUS status) { _players.at(num)->setStatus(status); }
