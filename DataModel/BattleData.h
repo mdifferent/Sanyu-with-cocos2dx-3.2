@@ -8,17 +8,14 @@
 #include "MonsterData.h"
 
 using namespace std;
-using namespace battledata;
-namespace battledata {
-
-	enum WINNING_CONDITIONS {
+	enum class WINNING_CONDITIONS {
 		KILL_ALL,
 		KILL_SPEC,
 		KEEP_ALIVE,
 		NEVER
 	};
 
-	enum LOSE_CONDITION {
+	enum class LOSE_CONDITION {
 		ALL_DEAD,
 		SOMEONE_DEAD,
 		ROUNDS_REACH,
@@ -54,6 +51,14 @@ namespace battledata {
 		void setPlayerProperty(int num, PLAYER_PROP_TYPE prop, int value) { _players.at(num)->setProperty(prop, value); }
 		void setMonsterProperty(int num, PLAYER_PROP_TYPE prop, int value) { _monsters.at(num)->setProperty(prop, value); }
 
+		pair<int, int> getPlayerItem(int playerNum, int itemSeq) { return _players.at(playerNum)->getItem(itemSeq); }
+		pair<int, int> getPlayerSkill(int playerNum, int skillSeq) { return _players.at(playerNum)->getSkill(skillSeq); }
+		int getPlayerItemCount(int playerNum) { return _players.at(playerNum)->getItemCount(); }
+		int getPlayerSkillCount(int playerNum) { return _players.at(playerNum)->getSkillCount(); }
+
+		void playerUseItem(int playerNum, int itemId) { _players.at(playerNum)->useItem(itemId); }
+		void playerUseSkill(int playerNum, int skillId) { _players.at(playerNum)->useSkill(skillId); }
+
 	private:
 		string						_mapName;
 		string						_mapBgm;
@@ -62,5 +67,4 @@ namespace battledata {
 		WINNING_CONDITIONS			_winCon;
 		LOSE_CONDITION				_loseCon;
 	};
-}
 #endif

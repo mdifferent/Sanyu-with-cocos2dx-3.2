@@ -3,7 +3,7 @@
 
 #include "AbstractBattlerData.h"
 
-namespace battledata {
+
 	class PlayerData : public AbstractBattlerData
 	{
 	public:
@@ -15,5 +15,4 @@ namespace battledata {
 		void learnSkill(const int id, const int level = 1) {};
 		void useSkill(const int id);
 	};
-}
 #endif

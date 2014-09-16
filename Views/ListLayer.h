@@ -20,7 +20,7 @@ USING_NS_CC_EXT;
 		static ListLayer *createWithDataSource(TableViewDataSource *source);
 
 		void setContentType(LIST_TYPE);
-		LIST_TYPE getContentType() const;
+		LIST_TYPE getContentType() const { return _type; }
 		void setDataSource(TableViewDataSource *source){ _datasource = source; }
 		void setDelegate(TableViewDelegate *delegate){ _pTableView->setDelegate(delegate); }
 		void setTouchEnabled(bool value);
@@ -31,6 +31,7 @@ USING_NS_CC_EXT;
 		Sprite*					_pBackImg;
 		Label*					_pLabel;
 		TableViewDataSource*	_datasource;
+		ssize_t					_selectedIdx;
 	};
 
 

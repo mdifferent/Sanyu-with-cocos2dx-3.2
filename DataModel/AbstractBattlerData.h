@@ -8,9 +8,7 @@
 
 using namespace std;
 
-namespace battledata
-{
-	enum PLAYER_PROP_TYPE
+	enum class PLAYER_PROP_TYPE
 	{
 		MAX_HP,
 		CURRENT_HP,
@@ -22,7 +20,7 @@ namespace battledata
 		MELEE_DEFENSE
 	};
 
-	enum BATTLER_STATUS {
+	enum class BATTLER_STATUS {
 		NORMAL,
 		DEAD,
 		DEFENSE,
@@ -42,8 +40,13 @@ namespace battledata
 
 		void setProperty(const PLAYER_PROP_TYPE pro, const int value) { _properties[pro] = value; }
 		int getProperty(const PLAYER_PROP_TYPE pro) const { return _properties.at(pro); }
+		pair<int, int> getItem(int num);
+		pair<int, int> getSkill(int num);
+		int getItemCount() { return _items.size(); }
+		int getSkillCount() { return _skills.size(); }
+		
 
-	private:
+	protected:
 		string _name;
 		BATTLER_STATUS _status;
 		map<PLAYER_PROP_TYPE, int> _properties;	//name-value
@@ -51,7 +54,6 @@ namespace battledata
 		map<int, int> _skills;						//id-level
 		map<PLAYER_PROP_TYPE, int> _buffs;
 	};
-}
 
 
 #endif

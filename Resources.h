@@ -63,6 +63,11 @@ static const char DIGIT_PNG_PATH[] = "images/number.png";
 static const char BUTTON_BG[] = "";
 
 //Select list
-static const char SELECT_LIST_BG_PATH[] = "images/selectback.png";
+static const char SELECT_LIST_BG_PATH[] = "images/list/selectback.png";
+static const char CELL_BG_PATH[] = "images/list/cellback.png";
+static const char SELECT_LIST_OK[] = "images/list/command_yes.png";
+static const char SELECT_LIST_OK_PRESS[] = "images/list/command_yes_act.png";
+static const char SELECT_LIST_CANCEL[] = "images/list/command_no.png";
+static const char SELECT_LIST_CANCEL_PRESS[] = "images/list/command_no_act.png";
 
 #endif

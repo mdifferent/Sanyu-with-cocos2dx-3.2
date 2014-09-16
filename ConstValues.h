@@ -27,4 +27,10 @@ static const char ITEM_TITLE[] = "ITEM SELECT";
 static const float BACK_WIDTH = 461;
 static const float BACK_HEIGHT = 327;
 static const float BACK_LABEL_HEIGHT = 24;
+
+//Target type
+static const char ENEMY_ONE[] = "敌方单体";
+static const char ENEMY_ALL[] = "敌方全体";
+static const char PLAYER_ONE[] = "我方单体";
+static const char PLAYER_ALL[] = "我方全体";
 #endif

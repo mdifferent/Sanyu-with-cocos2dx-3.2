@@ -12,9 +12,6 @@ using namespace std;
 class ListItemCell : public TableViewCell
 {
 public:
-	ListItemCell(void);
-	~ListItemCell(void);
-
 	static ListItemCell *create(const string name, const string target, const int amount);
 	bool init(void);
 	void updateLabels(const string name, const string target, const int amount);
@@ -24,10 +21,10 @@ public:
 	bool isSelected() { return _bg->getOpacity() > 0 ? true : false; }
 
 private:
-	LabelTTF *_pItemName;
-	LabelTTF *_pTarget;
-	LabelTTF *_pAmount;
-	NodeRGBA *_bg;
+	Label *_pItemName;
+	Label *_pTarget;
+	Label *_pAmount;
+	Sprite *_bg;
 };
 
 #endif

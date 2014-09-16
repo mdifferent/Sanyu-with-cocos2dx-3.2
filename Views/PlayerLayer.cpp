@@ -20,13 +20,13 @@ bool PlayerLayer::init()
 				Rect rect = this->getChildByTag(i)->getBoundingBox();
 				if (rect.containsPoint(touchPos)) {
 					switch (_status) {
-					case WAIT_TARGET:
+					case PlayerLayer::PLAYER_LAYER_STATUS::WAIT_TARGET:
 						_target = i;
-						_status = TARGET_SELECTED;
+						_status = PlayerLayer::PLAYER_LAYER_STATUS::TARGET_SELECTED;
 						return false;
-					case MENU_SELECTED:
-					case WAIT_COMMAND:
-					case MENU_OPEN:
+					case PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED:
+					case PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND:
+					case PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN:
 						_selectedPlayer = i;
 						openMenu(i);
 						return false;
@@ -34,10 +34,10 @@ bool PlayerLayer::init()
 				}
 			}
 		}
-		else if (this->_status == MENU_OPEN) {
+		else if (this->_status == PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN) {
 			closeMenu();
-			_status = WAIT_COMMAND;
-			_cmd = NONE;
+			_status = PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND;
+			_cmd = PlayerLayer::PLAYER_CMD::NONE;
 		}
 		return false; 
 	};
@@ -66,8 +66,8 @@ bool PlayerLayer::init()
 	playerMenu->setPosition(-10, -10);
 	addChild(playerMenu, 1, "menu");
 
-	_status = WAIT_COMMAND;
-	_cmd = NONE;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND;
+	_cmd = PlayerLayer::PLAYER_CMD::NONE;
 
 	return true;
 }
@@ -87,16 +87,16 @@ PlayerLayer* PlayerLayer::createWithNames(const map<int, string>* names)
 
 void PlayerLayer::playerAttackCallback(Ref* pSender)
 {
-	_status = MENU_SELECTED;
-	_cmd = ATTACK;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED;
+	_cmd = PlayerLayer::PLAYER_CMD::ATTACK;
 	closeMenu();
 	//m_data->at(m_selectedPlayer)->setStatus(NORMAL);
 }
 
 void PlayerLayer::playerSkillCallback(Ref* pSender)
 {
-	_status = MENU_SELECTED;
-	_cmd = SKILL;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED;
+	_cmd = PlayerLayer::PLAYER_CMD::SKILL;
 	closeMenu();
 	//m_data->at(m_selectedPlayer)->setStatus(NORMAL);
 }
@@ -104,23 +104,23 @@ void PlayerLayer::playerSkillCallback(Ref* pSender)
 void PlayerLayer::playerGuardCallback(Ref* pSender)
 {
 	//m_data->at(m_selectedPlayer)->setStatus(DEFENSE);
-	_status = MENU_SELECTED;
-	_cmd = GUARD;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED;
+	_cmd = PlayerLayer::PLAYER_CMD::GUARD;
 	closeMenu();
 }
 
 void PlayerLayer::playerEscapeCallback(Ref* pSender)
 {
-	_status = MENU_SELECTED;
-	_cmd = ESCAPE;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED;
+	_cmd = PlayerLayer::PLAYER_CMD::ESCAPE;
 	closeMenu();
 	//m_data->at(m_selectedPlayer)->setStatus(NORMAL);
 }
 
 void PlayerLayer::playerItemCallback(Ref* pSender)
 {
-	_status = MENU_SELECTED;
-	_cmd = ITEM;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED;
+	_cmd = PlayerLayer::PLAYER_CMD::ITEM;
 	closeMenu();
 	//m_data->at(m_selectedPlayer)->setStatus(NORMAL);
 }
@@ -132,8 +132,8 @@ void PlayerLayer::openMenu(int pos)
 	pMenu->setEnabled(true);
 	pMenu->setPosition(Vec2(middlePoint.x + 50, middlePoint.y + 60));
 	pMenu->runAction(FadeIn::create(0.2f));
-	_status = MENU_OPEN;
-	_cmd = NONE;
+	_status = PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN;
+	_cmd = PlayerLayer::PLAYER_CMD::NONE;
 }
 
 void PlayerLayer::closeMenu(void)

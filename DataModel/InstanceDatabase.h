@@ -6,7 +6,6 @@
 #include "SkillData.h"
 #include "ItemData.h"
 using namespace std;
-using namespace listdata;
 class InstanceDatabase
 {
 public:
@@ -16,8 +15,8 @@ public:
 	bool initSkillSetByIds(list<int>);
 	bool initItemSetByIds(list<int>);
 
-	AbstractListItemData& getSkillById(int id);
-	AbstractListItemData& getItemById(int id);
+	AbstractListItemData* getSkillById(int id);
+	AbstractListItemData* getItemById(int id);
 private:
 	InstanceDatabase(){};
 	~InstanceDatabase(){};

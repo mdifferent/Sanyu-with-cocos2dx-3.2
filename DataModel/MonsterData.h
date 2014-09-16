@@ -3,8 +3,7 @@
 
 #include "AbstractBattlerData.h"
 
-namespace battledata {
-	enum MONSTER_TYPE {
+	enum class MONSTER_TYPE {
 		A
 	};
 
@@ -16,6 +15,5 @@ namespace battledata {
 		MONSTER_TYPE	_type;
 		int				_exp;
 	};
-}
 
 #endif

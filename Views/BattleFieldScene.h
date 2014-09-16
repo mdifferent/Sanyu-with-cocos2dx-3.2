@@ -8,7 +8,6 @@
 
 USING_NS_CC;
 USING_NS_CC_EXT;
-using namespace listdata;
 
 class BattleData;
 class BackgroundLayer;
@@ -36,6 +35,8 @@ public:
 	TableViewCell* tableCellAtIndex(TableView *table, ssize_t idx);
 	ssize_t numberOfCellsInTableView(TableView *table);
 	void tableCellTouched(TableView* table, TableViewCell* cell);
+	void tableCellHighlight(TableView* table, TableViewCell* cell);
+	void tableCellUnhighlight(TableView* table, TableViewCell* cell);
 
 	int getSelectedItemId() { return _selectedListItemId; }
 
@@ -45,12 +46,12 @@ private:
 	bool checkRoundFinished();
 	void switchOwner();
 	void switchList(bool isOpen);
-	void effectOnMonsters(AbstractListItemData& pEffectSource);
-	void effectOnMonster(int monsterNo, AbstractListItemData& pEffectSource);
+	void effectOnMonsters(AbstractListItemData* pEffectSource);
+	void effectOnMonster(int monsterNo, AbstractListItemData* pEffectSource);
 
 private:
 	int							_sceneId;
-	battledata::BattleData*		_data;
+	BattleData*		_data;
 	ROUND_OWNER					_roundOwner;
 
 	BackgroundLayer*			_bgLayer;

@@ -38,6 +38,9 @@ bool ListLayer::init() {
 		return false;
 	}
 
+	//auto *okBtn = MenuItemImage::create(SELECT_LIST_OK, SELECT_LIST_OK_PRESS, CC_CALLBACK_1(MainMenuScene::startCallback, this));
+	//auto *cancelBtn = MenuItemImage::create(SELECT_LIST_CANCEL, SELECT_LIST_CANCEL_PRESS, CC_CALLBACK_1(MainMenuScene::loadCallback, this));
+
 	return true;
 }
 

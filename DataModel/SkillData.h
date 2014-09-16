@@ -3,9 +3,7 @@
 
 #include "AbstractListItemData.h"
 
-namespace listdata
-{
-	enum SKILL_TYPE {
+	enum class SKILL_TYPE {
 		RECOVER,
 		ATTACK,
 		ENHENCE,
@@ -15,15 +13,15 @@ namespace listdata
 	class SkillData : public AbstractListItemData
 	{
 	public:
-		SkillData(int id, string name, TargetType target, bool multi, int cost, SKILL_TYPE type)
+		SkillData(int id, string name, TARGET_TYPE target, bool multi, int cost, SKILL_TYPE type)
 			:AbstractListItemData(id, name, target, multi), _cost(cost), _type(type) {}
 
 		SKILL_TYPE getSkillType() const { return _type; }
-		int getCost() const { return _cost; }
+		int getCost() { return _cost; }
 	private:
 		int _cost;
 		SKILL_TYPE _type;
 	};
-}
+
 
 #endif
