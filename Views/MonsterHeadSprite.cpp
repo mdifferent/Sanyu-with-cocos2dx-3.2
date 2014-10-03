@@ -17,7 +17,7 @@ bool MonsterHeadSprite::init()
 #endif
 	sprintf(pName, MONSTER_HEAD_NAME, _name.c_str());
 	CCLOG("%s", pName);
-	this->setTexture(MONSTER_HEAD_NAME);
+	this->setTexture(pName);
 
 	Sprite *hp = Sprite::create(MONSTER_HP_BAR);
 	ProgressTimer *hpBarTimer = ProgressTimer::create(hp);
@@ -30,8 +30,9 @@ bool MonsterHeadSprite::init()
 
 	//Damage number
 	DigitSprite *digit = DigitSprite::create();
-	digit->setPosition(getPosition());
+	digit->setPosition(getAnchorPointInPoints());
 	addChild(digit, 3, "digit");
+	//digit->setVisible(false);
 	return true;
 }
 

@@ -42,6 +42,7 @@ bool BattleFieldScene::init()
 
 	int playerCount = _data->getPlayerCount();
 	int monsterCount = _data->getMonsterCount();
+	Size size = Director::getInstance()->getWinSize();
 	for (int i = 0; i<playerCount; i++)
 		_playerFinishFlag.insert(std::make_pair(i, false));
 	for (int i = 0; i<monsterCount; i++)
@@ -49,9 +50,23 @@ bool BattleFieldScene::init()
 
 	//Init layers
 	_bgLayer = BackgroundLayer::create(_data->getMapName());
+	_bgLayer->setPosition(size.width * 0.5, size.height * 0.5);
 	_infoLayer = InfoBarLayer::create();
-	_playerLayer = PlayerLayer::createWithNames(_data->getPlayerNames());
+	_infoLayer->setPosition(size.width * 0.5, size.height * 0.5);
+	map<int, string> *playerNames = _data->getPlayerNames();
+	map<int, tuple<string, int, int, int, int>> initPlayerValues;
+	for each (pair<int,string> var in *playerNames)
+	{
+		initPlayerValues.insert(make_pair(var.first, make_tuple(var.second,
+			_data->getPlayerProperty(var.first, PLAYER_PROP_TYPE::MAX_HP),
+			_data->getPlayerProperty(var.first, PLAYER_PROP_TYPE::CURRENT_HP),
+			_data->getPlayerProperty(var.first, PLAYER_PROP_TYPE::MAX_SP),
+			_data->getPlayerProperty(var.first, PLAYER_PROP_TYPE::CURRENT_SP))));
+	}
+	delete playerNames;
+	_playerLayer = PlayerLayer::createWithNames(initPlayerValues);
 	_monsterLayer = MonsterLayer::createWithNames(_data->getMonsterNames());
+	_monsterLayer->setPosition(0,0);
 	if (_bgLayer && _infoLayer && _playerLayer && _monsterLayer) {
 		this->addChild(_bgLayer, 0);
 		this->addChild(_infoLayer, 1);
@@ -122,7 +137,7 @@ void BattleFieldScene::runPlayerRound()
 	PlayerLayer::PLAYER_LAYER_STATUS playerStatus = _playerLayer->getStatus();
 
 	//Init status
-	if (playerStatus == PlayerLayer::PLAYER_LAYER_STATUS::WAIT_TARGET && monsterStatus == MonsterLayer::SLEEP) {
+	if (playerStatus == PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND && monsterStatus == MonsterLayer::SLEEP) {
 		_monsterLayer->resetTarget();
 		_playerLayer->resetSelectedMenu();
 		_playerLayer->resetSelectedPlayer();

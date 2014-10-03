@@ -19,14 +19,19 @@ using namespace std;
 class HeadSprite : public Sprite
 {
 public:
-    HeadSprite(const string name) {_name = name;}
+	HeadSprite(const string name, const int maxHp, const int currentHp,	const int maxSp, const int currentSp)
+		: _name(name), _maxHp(maxHp), _currentHp(currentHp), _maxSp(maxSp), _currentSp(currentSp) {}
     
     virtual bool init();
-	CREATE_FUNC_WITH_STRING(HeadSprite, name);
+	static HeadSprite* createWithNameAndValues(const string name, const int maxHp, const int currentHp, const int maxSp, const int currentSp);
 
 	virtual void onValueModified(int value, int type);	//type 1: HP, 2:SP
 protected:
     string _name;
+	int _maxHp;
+	int _currentHp;
+	int _maxSp;
+	int _currentSp;
 };
 
 #endif

@@ -4,11 +4,11 @@
 
 bool DigitSprite::init()
 {
-	if (!Sprite::init())
+	if (!Node::init())
 		return false;
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(DIGIT_PLIST_PATH, DIGIT_PNG_PATH);
 	extendSpriteBatch(DEFAULT_DAMAGE_DIGIT);
-	setOpacity(0);
+	setOpacity(255);
 	return true;
 }
 
@@ -21,19 +21,30 @@ void DigitSprite::showDigit(int value)
 		extendSpriteBatch(len - avaSpriteCount);
 	for (int i = 0; i < len;i++) {
 		Sprite* sprite = (Sprite*)this->getChildByTag(i);
-		sprite->setSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName("number_" + num.at(i)));
+		char cnum[10];
+		sprintf(cnum, NUMBER_SPRITE_NAME_TEMPLATE, num.at(len - i - 1));
+		SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(cnum);
+		sprite->setSpriteFrame(spriteFrame);
+		sprite->setOpacity(255);
+		//sprite->runAction(FadeIn::create(0.5f));
+		//sprite->runAction(Sequence::create(FadeTo::create(0.5f, 255), MoveBy::create(0.5f, Vec2(0, 50)), NULL));
+		sprite->runAction(MoveBy::create(0.5f, Vec2(0, 50)));
 	}
-	this->runAction(FadeIn::create(0.1f));
-	for each (Node* sprite in getChildren()) 
-		sprite->runAction(MoveBy::create(0.5f, Vec2(0, 25)));
-	this->runAction(FadeOut::create(0.1f));
+	
+	for each (Node* sprite in getChildren()) {
+		sprite->runAction(Sequence::createWithTwoActions(FadeOut::create(0.5f),	MoveBy::create(0.1f, Vec2(0, -50))));
+	}
+		
 }
 
 void DigitSprite::extendSpriteBatch(int delta)
 {
 	for (int i = this->getChildrenCount(); i < delta; i++) {
 		auto sprite = Sprite::createWithSpriteFrameName("number_0");
-		sprite->setPosition(getPositionX() + getContentSize().width, getPositionY() + getContentSize().height);
+		float x = getPositionX() - i * sprite->getContentSize().width;
+		float y = getPositionY();
+		sprite->setPosition(x, y);
 		addChild(sprite, 0, i);
+		sprite->setOpacity(0);
 	}
 }

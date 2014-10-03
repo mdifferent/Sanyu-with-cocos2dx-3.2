@@ -1,5 +1,6 @@
 #include "HelloWorldScene.h"
 #include "Resources.h"
+#include "Views\DigitSprite.h"
 
 USING_NS_CC;
 
@@ -73,7 +74,11 @@ bool HelloWorld::init()
 
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
-    
+
+	DigitSprite *digit = DigitSprite::create();
+	digit->setPosition(200,200);
+	addChild(digit, 3, "digit");
+		
     return true;
 }
 
@@ -84,8 +89,8 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
 	return;
 #endif
-
-	Director::getInstance()->end();
+	DigitSprite *digit = (DigitSprite*)getChildByName("digit");
+	digit->showDigit(73);
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);

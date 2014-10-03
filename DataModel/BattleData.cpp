@@ -78,7 +78,11 @@ BattleData::~BattleData()
 
 BattleData* BattleData::loadData(int sceneNo)
 {
-	return NULL;
+	BattleData *data = new BattleData();
+	if (data) {
+		data->setMapName("images/bk.jpg");
+	}
+	return data;
 }
 
 map<int, string>* BattleData::getPlayerNames()

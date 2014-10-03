@@ -14,6 +14,19 @@
 	#include "../proj.win32/WIN32Utils.h"
 #endif 
 
+HeadSprite* HeadSprite::createWithNameAndValues(const string name, const int maxHp, const int currentHp, const int maxSp, const int currentSp)
+{
+	HeadSprite *sprite = new HeadSprite(name, maxHp, currentHp, maxSp, currentSp);
+	if (sprite && sprite->init()) {
+		sprite->autorelease();
+		return sprite;
+	}
+	else {
+		CC_SAFE_DELETE(sprite);
+		return nullptr;
+	}
+}
+
 bool HeadSprite::init()
 {
     if (!Sprite::init())
@@ -25,7 +38,8 @@ bool HeadSprite::init()
 #endif
 	sprintf(pName, HEAD_NAME, _name.c_str());
 	CCLOG("%s", pName);
-    this->setTexture(HEAD_NAME);
+	
+	this->setTexture(pName);
     Sprite *hp = Sprite::create(HP_BAR);
     Sprite *sp = Sprite::create(SP_BAR);
     if (!hp || !sp) {
@@ -58,19 +72,27 @@ bool HeadSprite::init()
     this->addChild(nameLabel,2,"name");
     
     //Player HP number
-    Label* hpLabel = Label::createWithSystemFont("0/0", NAME_FONT, HP_NUM_FONT_SIZE);
+	string hpTemp = "%d/%d";
+	char hpStr[10];
+	sprintf(hpStr, hpTemp.c_str(), _currentHp, _maxHp);
+	Label* hpLabel = Label::createWithSystemFont(hpStr, NAME_FONT, HP_NUM_FONT_SIZE);
     hpLabel->setPosition(165,44);
     this->addChild(hpLabel,2,"hpnum");
     
     //Player SP number
-    Label* spLabel = Label::createWithSystemFont("0/0", NAME_FONT, HP_NUM_FONT_SIZE);
+	string spTemp = "%d/%d";
+	char spStr[10];
+	sprintf(spStr, spTemp.c_str(), _currentSp, _maxSp);
+	Label* spLabel = Label::createWithSystemFont(spStr, NAME_FONT, HP_NUM_FONT_SIZE);
     spLabel->setPosition(157,18);
     this->addChild(spLabel,2,"spnum");
 
 	//Damage number
 	DigitSprite *digit = DigitSprite::create();
-	digit->setPosition(getPosition());
+	digit->setPosition(getAnchorPointInPoints());
 	addChild(digit, 3, "digit");
+	digit->setOpacity(0);
+	digit->setVisible(false);
 
     return true;
 }

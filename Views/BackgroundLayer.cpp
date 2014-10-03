@@ -7,7 +7,7 @@ bool BackgroundLayer::init()
 		CCLOG("Error in init CCLayer!");
 		return false;
 	}
-
+	
 	Sprite* sprite = Sprite::create(_bgName.c_str());
 	if (!sprite) {
 		CCLOG("Error in load bg map!");

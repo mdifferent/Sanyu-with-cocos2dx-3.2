@@ -7,7 +7,7 @@
 USING_NS_CC;
 using namespace std;
 
-class DigitSprite : public Sprite
+class DigitSprite : public Node
 {
 public:
 	bool init();

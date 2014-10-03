@@ -37,7 +37,9 @@ bool ListItemCell::init(void)
 	addChild(_pTarget, 1);
 	_pAmount->setPosition(ccp(400, 0));
 	addChild(_pAmount, 1);
-	_bg = Sprite::create(CELL_BG_PATH);
+	Texture2D *bgTexture = Director::getInstance()->getTextureCache()->addImage(CELL_BG_PATH);
+	_bg = Sprite::create();
+	_bg->setTexture(bgTexture);
 	_bg->setAnchorPoint(Vec2(0,0));
 	_bg->setPosition(Vec2(0, 0));
 	addChild(_bg, 0);

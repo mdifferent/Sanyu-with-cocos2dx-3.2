@@ -76,7 +76,7 @@ void MainMenuScene::startCallback(Ref* pSender)
 		exMenu->setEnabled(false);
 		exMenu->runAction(FadeOut::create(0.5f));
 	}
-	Director::getInstance()->replaceScene(BattleFieldScene::create());
+	Director::getInstance()->replaceScene(BattleFieldScene::scene(1));
 }
 
 void MainMenuScene::loadCallback(Ref* pSender)

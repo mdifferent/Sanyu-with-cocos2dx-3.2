@@ -36,6 +36,7 @@ using namespace std;
 		
 		string getMapName() const { return _mapName; }
 		string getBgmName() const { return _mapBgm; }
+		void setMapName(string name) { _mapName = name; }
 
 		map<int, string>* getPlayerNames();
 		map<int, string>* getMonsterNames();

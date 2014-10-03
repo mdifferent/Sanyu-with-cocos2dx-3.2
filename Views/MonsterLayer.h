@@ -41,6 +41,10 @@ public:
 
 	void onAttacked(int target, int value, float percent, bool isDead);
 
+	bool onTouchBegan(Touch *touch, Event *pEvent);
+	void onTouchMoved(Touch *touch, Event *pEvent);
+	void onTouchEnded(Touch *touch, Event *pEvent);
+
 private:
 	bool initTouchListener();
 

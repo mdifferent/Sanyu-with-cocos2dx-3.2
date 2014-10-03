@@ -9,46 +9,20 @@ bool PlayerLayer::init()
 		return false;
 	int playerCount = _heads.size();
 	float screenWidth = Director::getInstance()->getVisibleSize().width;
+	
 
 	auto listener1 = EventListenerTouchOneByOne::create();
-	listener1->setSwallowTouches(true);
-	listener1->onTouchBegan = [&playerCount,this](Touch* touch, Event* event) {
-		Vec2 touchPos = touch->getLocationInView();
-		CCLOG("Touch at x:%f,y:%f",touchPos.x,touchPos.y);
-		if (touchPos.y <= this->getChildByTag(0)->getContentSize().height) {
-			for (int i = 0; i < playerCount; i++) {
-				Rect rect = this->getChildByTag(i)->getBoundingBox();
-				if (rect.containsPoint(touchPos)) {
-					switch (_status) {
-					case PlayerLayer::PLAYER_LAYER_STATUS::WAIT_TARGET:
-						_target = i;
-						_status = PlayerLayer::PLAYER_LAYER_STATUS::TARGET_SELECTED;
-						return false;
-					case PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED:
-					case PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND:
-					case PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN:
-						_selectedPlayer = i;
-						openMenu(i);
-						return false;
-					}
-				}
-			}
-		}
-		else if (this->_status == PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN) {
-			closeMenu();
-			_status = PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND;
-			_cmd = PlayerLayer::PLAYER_CMD::NONE;
-		}
-		return false; 
-	};
+	listener1->setSwallowTouches(false);
+	listener1->onTouchBegan = CC_CALLBACK_2(PlayerLayer::onTouchBegan, this);
 	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
 
-	for each (pair<int, string> var in _heads) {
-		HeadSprite *sprite = HeadSprite::create(var.second);
+	for each (pair<int, tuple<string,int,int,int,int>> var in _heads) {
+		HeadSprite *sprite = HeadSprite::createWithNameAndValues(get<0>(var.second), 
+			get<1>(var.second), get<2>(var.second), get<3>(var.second), get<4>(var.second));
 		float playerWidth = sprite->getContentSize().width;
 		float playerHeight = sprite->getContentSize().height;
 		float playerX = screenWidth*0.5 + (var.first - playerCount*0.5 + 0.5)*playerWidth;
-		float playerY = 0 - playerHeight*0.5;
+		float playerY = 0 + playerHeight*0.5;
 		sprite->setPosition(playerX, playerY);
 		addChild(sprite, 0, var.first);
 		PLAYER_HEAD_HEIGHT = sprite->getContentSize().height;
@@ -72,7 +46,39 @@ bool PlayerLayer::init()
 	return true;
 }
 
-PlayerLayer* PlayerLayer::createWithNames(const map<int, string>* names)
+bool PlayerLayer::onTouchBegan(Touch *touch, Event *pEvent)
+{
+	Vec2 touchPos = touch->getLocation();
+	int playerCount = _heads.size();
+	CCLOG("Touch at x:%f,y:%f", touchPos.x, touchPos.y);
+	if (touchPos.y <= this->getChildByTag(0)->getContentSize().height) {
+		for (int i = 0; i < playerCount; i++) {
+			Rect rect = this->getChildByTag(i)->getBoundingBox();
+			if (rect.containsPoint(touchPos)) {
+				switch (_status) {
+				case PlayerLayer::PLAYER_LAYER_STATUS::WAIT_TARGET:
+					_target = i;
+					_status = PlayerLayer::PLAYER_LAYER_STATUS::TARGET_SELECTED;
+					return false;
+				case PlayerLayer::PLAYER_LAYER_STATUS::MENU_SELECTED:
+				case PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND:
+				case PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN:
+					_selectedPlayer = i;
+					openMenu(i);
+					return false;
+				}
+			}
+		}
+	}
+	else if (this->_status == PlayerLayer::PLAYER_LAYER_STATUS::MENU_OPEN) {
+		closeMenu();
+		_status = PlayerLayer::PLAYER_LAYER_STATUS::WAIT_COMMAND;
+		_cmd = PlayerLayer::PLAYER_CMD::NONE;
+	}
+	return false;
+}
+
+PlayerLayer* PlayerLayer::createWithNames(const map<int, tuple<string, int, int, int, int>> names)
 {
 	PlayerLayer *layer = new PlayerLayer(names);
 	if (layer && layer->init()) {
@@ -154,7 +160,7 @@ void PlayerLayer::onPlayerPropModified(int type, int target, int value)
 void PlayerLayer::beforeSpecialAttack(int playerNo)
 {
 	float middleX = Director::getInstance()->getVisibleSize().width/2;
-	for each (pair<int, string> var in _heads) {
+	for each (pair<int, tuple<string, int, int, int, int>> var in _heads) {
 		if (var.first != playerNo)
 			this->getChildByTag(var.first)->runAction(FadeOut::create(0.5f));
 	}
@@ -170,7 +176,7 @@ void PlayerLayer::afterSpecialAttack(int playerNo)
 	float headWidth = this->getChildByTag(playerNo)->getContentSize().width;
 	float horiDistance = middleX + (playerNo - playerCount*0.5 + 0.5)*headWidth - playerPosX;
 	this->getChildByTag(playerNo)->runAction(MoveBy::create(1.0f, Vec2(horiDistance, 0)));
-	for each (pair<int, string> var in _heads) {
+	for each (pair<int, tuple<string, int, int, int, int>> var in _heads) {
 		if (var.first != playerNo)
 			this->getChildByTag(var.first)->runAction(FadeIn::create(0.5f));
 	}

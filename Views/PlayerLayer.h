@@ -4,6 +4,7 @@
 #include "cocos2d.h"
 #include <map>
 #include <string>
+#include <tuple>
 using namespace std;
 USING_NS_CC;
 
@@ -28,11 +29,11 @@ public:
 		FINISHED
 	};
 
-	PlayerLayer(const map<int, string>* names) { _heads = *names; }
+	PlayerLayer(const map<int, tuple<string,int,int,int,int>> names) { _heads = names; }
 	~PlayerLayer() { delete &_heads; }
 
 	bool init();
-	static PlayerLayer* createWithNames(const map<int, string>*);
+	static PlayerLayer* createWithNames(const map<int, tuple<string, int, int, int, int>>);
 
 	void openMenu(int);
 	void closeMenu(void);
@@ -42,6 +43,8 @@ public:
 	void playerGuardCallback(Ref* pSender);
 	void playerEscapeCallback(Ref* pSender);
 	void playerItemCallback(Ref* pSender);
+
+	bool onTouchBegan(Touch *touch, Event *pEvent);
 
 	PLAYER_LAYER_STATUS getStatus() { return _status; }
 	void setStatus(const PLAYER_LAYER_STATUS status) { _status = status; }
@@ -57,7 +60,7 @@ public:
 	void afterSpecialAttack(int num = 0);
 
 private:
-	map<int, string>		_heads;
+	map<int, tuple<string,int,int,int,int>>	_heads;	//tuple:name,maxHp,currentHp,maxSp,currentSp
 	PLAYER_LAYER_STATUS		_status;
 	PLAYER_CMD				_cmd;
 	int						_selectedPlayer;
