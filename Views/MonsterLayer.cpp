@@ -94,14 +94,14 @@ bool MonsterLayer::onTouchBegan(Touch *touch, Event *pEvent)
 		}
 	}
 	if (_status == WAIT_TARGET) {
-		if (touch->getLocationInView().y < PLAYER_HEAD_HEIGHT) {
+		if (touch->getLocation().y < PLAYER_HEAD_HEIGHT) {
 			this->setStatus(SLEEP);
 			return false;
 		}
 		else {
 			for each (pair<int, string> var in _heads) {
 				auto monster = getChildByTag(var.first);
-				if (monster->getBoundingBox().containsPoint(touch->getLocationInView())) {
+				if (monster->getBoundingBox().containsPoint(touch->getLocation())) {
 					MoveBy *pMoveAction = MoveBy::create(0.05f, Vec2(10, 10));
 					monster->runAction(Repeat::create(Sequence::createWithTwoActions(pMoveAction, pMoveAction->reverse()), 4));
 					//this->getChildByTag(var.first)->runAction(MoveTo::create(0.05f, m_originalPos.at(var.first)));

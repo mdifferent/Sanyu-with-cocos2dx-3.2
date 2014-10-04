@@ -3,16 +3,15 @@
 
 #include "AbstractBattlerData.h"
 
-
 	class PlayerData : public AbstractBattlerData
 	{
 	public:
 		PlayerData(const string name) : AbstractBattlerData(name){};
 
 		int useItem(const int id);
-		void obtainItem(const int id, const int iCount = 1) {};
+		void obtainItem(const int id, const int iCount = 1);
 
-		void learnSkill(const int id, const int level = 1) {};
+		void learnSkill(const int id, const int level = 1);
 		void useSkill(const int id);
 	};
 #endif

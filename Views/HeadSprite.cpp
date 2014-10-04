@@ -45,17 +45,14 @@ bool HeadSprite::init()
     if (!hp || !sp) {
         return false;
     }
-    hp->setPosition(165,44);
-    sp->setPosition(157,18);
-    this->addChild(hp, 1, 11);
-    this->addChild(sp, 1, 12);
     
     //Player HP bar
     ProgressTimer *hpBarTimer = ProgressTimer::create(hp);
     hpBarTimer->setType(ProgressTimer::Type::BAR);
     hpBarTimer->setMidpoint(Vec2(0,0));
     hpBarTimer->setBarChangeRate(Vec2(1,0));
-    hpBarTimer->setPosition(170,70);
+	hpBarTimer->setPosition(165, 44);
+	hpBarTimer->setPercentage(100);
     addChild(hpBarTimer,1,"hpbar");
     
     //Player SP bar
@@ -63,7 +60,8 @@ bool HeadSprite::init()
     spBarTimer->setType(ProgressTimer::Type::BAR);
     spBarTimer->setMidpoint(Vec2(0,0));
     spBarTimer->setBarChangeRate(Vec2(1, 0));
-    spBarTimer->setPosition(170,50);
+	spBarTimer->setPosition(157, 18);
+	spBarTimer->setPercentage(100);
     addChild(spBarTimer,1,"spbar");
     
     //Player Name
@@ -125,7 +123,7 @@ void HeadSprite::onValueModified(int value, int type)
 	label->setString(to_string(newValue).append(hpStr.substr(pos)));
 	
 	//Modify bar
-	float deltaPer = (abs(value) / maxValue)  * 100.0f;
+	float deltaPer = ((float)abs(value) / (float)maxValue)  * 100.0f;
     float per = bar->getPercentage();
 	if (newValue == 0)
 		bar->runAction(ProgressFromTo::create(0.5f, per, 0));

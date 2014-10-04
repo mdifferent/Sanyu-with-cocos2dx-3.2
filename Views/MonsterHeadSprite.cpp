@@ -26,6 +26,7 @@ bool MonsterHeadSprite::init()
 	hpBarTimer->setBarChangeRate(Vec2(1, 0));
 	hpBarTimer->setPosition(getPositionX(),	getContentSize().height);
 	hpBarTimer->setOpacity(0);
+	hpBarTimer->setPercentage(100.0);
 	addChild(hpBarTimer, 1, "hpbar");
 
 	//Damage number
@@ -45,20 +46,20 @@ void MonsterHeadSprite::onHPModified(int deltaValue, float deltaPercent, bool is
 		DigitSprite *digit = (DigitSprite*)getChildByName("digit");
 		digit->showDigit(abs(deltaValue));
 		if (isDead) {
-			if (currentPer - deltaPercent < 0) 
-				bar->runAction(Sequence::create(FadeIn::create(0.3f),
-					ProgressFromTo::create(0.3f, currentPer, 0),
+			if (currentPer - deltaPercent < 0)
+				bar->setOpacity(255);
+				bar->runAction(Sequence::create(ProgressFromTo::create(0.3f, currentPer, 0),
 					FadeOut::create(0.3f), NULL));
 		}
 		else {
-			bar->runAction(Sequence::create(FadeIn::create(0.3f),
-				ProgressFromTo::create(0.3f, currentPer, currentPer - deltaPercent),
+			bar->setOpacity(255);
+			bar->runAction(Sequence::create(ProgressFromTo::create(0.3f, currentPer, currentPer - deltaPercent),
 				FadeOut::create(0.3f), NULL));
 		}
 	}
 	else {
-		bar->runAction(Sequence::create(FadeIn::create(0.3f),
-			ProgressFromTo::create(0.3f, currentPer, currentPer + deltaPercent),
+		bar->setOpacity(255);
+		bar->runAction(Sequence::create(ProgressFromTo::create(0.3f, currentPer, currentPer + deltaPercent),
 			FadeOut::create(0.3f), NULL));
 	}
 }

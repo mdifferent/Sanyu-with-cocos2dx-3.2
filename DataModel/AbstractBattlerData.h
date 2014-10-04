@@ -30,7 +30,7 @@ using namespace std;
 	class AbstractBattlerData
 	{
 	public:
-		AbstractBattlerData(string name) :_name(name) {}
+		AbstractBattlerData(string name);
 		AbstractBattlerData(const AbstractBattlerData &data) :_name(data.getName()), _status(data.getStatus()){}
 		~AbstractBattlerData(void) {}
 

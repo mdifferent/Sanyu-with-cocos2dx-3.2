@@ -311,25 +311,30 @@ void BattleFieldScene::runPlayerRound()
 void BattleFieldScene::runComputerRound()
 {
 	CCLOG("COMPUTER ROUND");
-	int mosnterCount = _data->getPlayerCount();
-	int playerCount = _data->getMonsterCount();
+	int playerCount = _data->getPlayerCount();
+	int mosnterCount = _data->getMonsterCount();
 	int attackTarget = -1;
 	int iMinHP = TOP_HP;
 	for (int i = 0; i<mosnterCount; i++) {
 		CCLOG("Monster %d", i);
 		if (_data->getMonsterStatusAt(i) != BATTLER_STATUS::DEAD) {
+			do {
+				attackTarget = rand() % playerCount;
+			} while (_data->getPlayerStatusAt(attackTarget) == BATTLER_STATUS::DEAD);
+				
+			/*
 			for (int j = 0; j<playerCount; j++) {
 				if (_data->getPlayerStatusAt(j) != BATTLER_STATUS::DEAD &&
 					_data->getPlayerProperty(j, PLAYER_PROP_TYPE::CURRENT_HP)< iMinHP) {
 					iMinHP = _data->getPlayerProperty(j, PLAYER_PROP_TYPE::CURRENT_HP);
 					attackTarget = j;
 				}
-			}
+			}*/
 			int defenseValue = _data->getPlayerProperty(attackTarget, PLAYER_PROP_TYPE::MELEE_DEFENSE);
 			int attackValue = _data->getMonsterProperty(i, PLAYER_PROP_TYPE::MELEE_ATTACK);
 			int damageValue = _data->getPlayerStatusAt(attackTarget) == BATTLER_STATUS::DEFENSE ? attackValue - defenseValue : attackValue;
 			int playerCurrentHP = _data->getPlayerProperty(attackTarget, PLAYER_PROP_TYPE::CURRENT_HP);
-			_playerLayer->onPlayerPropModified(1, attackTarget, damageValue);
+			_playerLayer->onPlayerPropModified(1, attackTarget, -damageValue);
 			if (damageValue >= playerCurrentHP) {
 				_data->setPlayerProperty(attackTarget, PLAYER_PROP_TYPE::CURRENT_HP, 0);
 				_data->setPlayerStatusAt(attackTarget, BATTLER_STATUS::DEAD);
