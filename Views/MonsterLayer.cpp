@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "ConstValues.h"
 #include "MonsterHeadSprite.h"
+#include <random>
 
 bool MonsterLayer::init()
 {
@@ -151,17 +152,17 @@ void MonsterLayer::onTouchMoved(Touch *touch, Event *pEvent)
 		for each (pair<int, string> var in _heads) {
 			MonsterHeadSprite *monster = (MonsterHeadSprite*)getChildByTag(var.first);
 			if (monster->getBoundingBox().containsPoint(touch->getLocation())) {
-				if (monster->getHpPercent() > 0.3)
+				if (monster->getHpPercent() > 30.0)
 					continue;
 				else {
-					magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_AVA));
+					magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_AVA_PATH));
 					magicPointer->runAction(RepeatForever::create(RotateBy::create(0.5, 90.0)));
 					return;
 				}
 			}
 		}
 		magicPointer->cleanup();
-		magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_UNAVA));
+		magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_UNAVA_PATH));
 	}
 }
 void MonsterLayer::onTouchEnded(Touch *touch, Event *pEvent)
@@ -172,10 +173,10 @@ void MonsterLayer::onTouchEnded(Touch *touch, Event *pEvent)
 		for each (pair<int, string> var in _heads) {
 			MonsterHeadSprite *monster = (MonsterHeadSprite*)getChildByTag(var.first);
 			if (monster->getBoundingBox().containsPoint(touch->getLocation())) {
-				if (monster->getHpPercent() > 0.3)
+				if (monster->getHpPercent() > 30.0)
 					continue;
 				else {
-					magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_AVA));
+					magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_AVA_PATH));
 					initSpecialAttack(var.first);
 					CCLOG("Target is %d", var.first);
 					_target = var.first;
@@ -184,7 +185,7 @@ void MonsterLayer::onTouchEnded(Touch *touch, Event *pEvent)
 				}
 			}
 		}
-		magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_UNAVA));
+		magicPointer->setTexture(Director::getInstance()->getTextureCache()->getTextureForKey(MAGIC_UNAVA_PATH));
 		magicPointer->runAction(Sequence::create(
 			Spawn::create(MoveTo::create(0.2f, Vec2(750, 550)), ScaleTo::create(0.2f, 0.5), NULL),
 			FadeOut::create(0.1f), NULL));
@@ -210,7 +211,8 @@ void MonsterLayer::onMagicMatrixAvailable()
 	_isMagicMatrixAvailable = true;
 	auto magicTag = getChildByName("magicTag");
 	if (magicTag->getOpacity() == 0)
-		magicTag->runAction(FadeIn::create(0.1f));
+		magicTag->setOpacity(255);
+		//magicTag->runAction(FadeIn::create(0.1f));
 }
 
 void MonsterLayer::onMagicMatrixUnavailable()
@@ -227,7 +229,7 @@ void MonsterLayer::onAttacked(int target, int deltaValue, float deltaPercent, bo
 	monster->onHPModified(deltaValue, deltaPercent, isDead);
 	if (isDead) {
 		monster->runAction(FadeOut::create(0.5f));
-		removeChildByTag(target);
+		//removeChildByTag(target);
 		_heads.erase(target);
 	}
 }
@@ -256,7 +258,7 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 	timeBarEmpty->runAction(FadeIn::create(0.1f));
 	timeBarFull->runAction(FadeIn::create(0.1f));
 	longHPBar->runAction(FadeIn::create(0.1f));
-	longHPBar->runAction(ProgressFromTo::create(SPECIAL_ATTACK_DURATION, 100.0, 0.0));
+	timeBarFull->runAction(ProgressFromTo::create(SPECIAL_ATTACK_DURATION, 100.0, 0.0));
 
 	Size monsterSize = monster->getContentSize();
 	Point middlePoint = Vec2(screenWidth / 2, screenHeight / 2);
@@ -264,14 +266,9 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 	float leftBorder = middlePoint.x - monsterSize.width*0.5;
 	float rightBorder = middlePoint.x + monsterSize.width*0.5;
 
-	//initRandomSeed
-	struct timeval psv;
-	gettimeofday(&psv, NULL);
-	unsigned long int rand_seed = psv.tv_sec * 1000 + psv.tv_usec / 1000;
-	srand(rand_seed);
 	while (_bubbles.size() < BUBBLE_MAX_COUNT) {
 		Sprite *bubble = Sprite::createWithSpriteFrameName("paopao_m1");
-		float xpos = leftBorder + CCRANDOM_0_1() * monster->getContentSize().width;
+		float xpos = leftBorder + CCRANDOM_0_1() * monsterSize.width;
 		bubble->setPosition(Vec2(xpos, bottomBorder));
 		bubble->setOpacity(0);
 		addChild(bubble, 3);
@@ -307,17 +304,16 @@ void MonsterLayer::onSpecialAttack(float ft)
 	ProgressTimer *longHPBar = (ProgressTimer*)getChildByName("hpbar");
 	ProgressTimer *timeBarFull = (ProgressTimer*)getChildByName("timebar_full");
 	auto timeBarEmpty = getChildByName("timebar_empty");
-	if (timeBarFull->getPercentage() < 0.1 || _BubbleHit >= BUBBLE_SUCCESS_HIT) {
+	if (timeBarFull->getPercentage() <= 0.1 || _BubbleHit >= BUBBLE_SUCCESS_HIT) {
 		timeBarEmpty->runAction(FadeOut::create(0.1f));
 		timeBarFull->cleanup();
 		timeBarFull->runAction(FadeOut::create(0.1f));
 		longHPBar->runAction(FadeOut::create(0.1f));
-		for each (Sprite* bubble in _bubbles)
-		{
+		for each (Sprite* bubble in _bubbles) {
 			bubble->cleanup();
-			_bubbles.eraseObject(bubble);
 			removeChild(bubble, true);
 		}
+		_bubbles.clear();
 		this->unschedule(SEL_SCHEDULE(&MonsterLayer::onSpecialAttack));
 		if (_BubbleHit >= BUBBLE_SUCCESS_HIT) {
 			this->getChildByTag(_target)->runAction(FadeOut::create(0.2f));

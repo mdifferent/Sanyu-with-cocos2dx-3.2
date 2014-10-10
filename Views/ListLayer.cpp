@@ -63,10 +63,9 @@ void ListLayer::setContentType(LIST_TYPE type) {
 	_pTableView->reloadData();
 }
 
-//Deprecated
 void ListLayer::setTouchEnabled(bool value)
 {
-	Layer::setTouchEnabled(value);
+	Layer::setSwallowsTouches(value);
 	if (_pTableView)
-		_pTableView->setTouchEnabled(value);
+		_pTableView->setSwallowsTouches(value);
 }

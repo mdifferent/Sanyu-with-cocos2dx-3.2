@@ -32,7 +32,8 @@ void DigitSprite::showDigit(int value)
 	}
 	
 	for each (Node* sprite in getChildren()) {
-		sprite->runAction(Sequence::createWithTwoActions(FadeOut::create(0.5f),	MoveBy::create(0.1f, Vec2(0, -50))));
+		if (sprite->getOpacity() > 0)
+			sprite->runAction(Sequence::createWithTwoActions(FadeOut::create(0.5f),	MoveBy::create(0.1f, Vec2(0, -50))));
 	}
 		
 }

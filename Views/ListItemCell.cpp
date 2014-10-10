@@ -31,11 +31,11 @@ bool ListItemCell::init(void)
 	_pAmount = Label::createWithSystemFont("", NAME_FONT, NAME_FONT_SIZE);
 
 	CCSize cellSize = this->getContentSize();
-	_pItemName->setPosition(ccp(50, 0));
+	_pItemName->setPosition(ccp(50, _pItemName->getContentSize().height*0.5));
 	addChild(_pItemName, 1);
-	_pTarget->setPosition(ccp(200, 0));
+	_pTarget->setPosition(ccp(200, cellSize.height*0.5));
 	addChild(_pTarget, 1);
-	_pAmount->setPosition(ccp(400, 0));
+	_pAmount->setPosition(ccp(400, cellSize.height*0.5));
 	addChild(_pAmount, 1);
 	Texture2D *bgTexture = Director::getInstance()->getTextureCache()->addImage(CELL_BG_PATH);
 	_bg = Sprite::create();

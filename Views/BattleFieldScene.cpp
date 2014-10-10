@@ -39,6 +39,11 @@ bool BattleFieldScene::init()
 	_data = BattleData::loadData(_sceneId);
 	if (!_data)
 		return false;
+	//Get from playerdata and monster data, only load skills/items used in current battle
+	list<int> skillIds;	
+	list<int> itemIds;
+	InstanceDatabase::getDatabaseInstance()->initItemSetByIds(itemIds);
+	InstanceDatabase::getDatabaseInstance()->initSkillSetByIds(skillIds);
 
 	int playerCount = _data->getPlayerCount();
 	int monsterCount = _data->getMonsterCount();
@@ -198,7 +203,7 @@ void BattleFieldScene::runPlayerRound()
 			}
 			else {
 				_data->setMonsterProperty(attackTarget, PLAYER_PROP_TYPE::CURRENT_HP, monsterCurrentHP - damage);
-				_monsterLayer->onAttacked(attackTarget, -damage, (damage / monsteMaxHP) * 100.0f, false);
+				_monsterLayer->onAttacked(attackTarget, -damage, ((float)damage / (float)monsteMaxHP) * 100.0f, false);
 			}
 			//CCLOG("Remain HP:%d", m_data->getMonster(iAttackTarget)->getProperty(CURRENT_HP));
 			_data->setPlayerStatusAt(attackSource, BATTLER_STATUS::FINISHED);
@@ -224,7 +229,7 @@ void BattleFieldScene::runPlayerRound()
 			if (iCost <= iCurrentSP) {
 				effectOnMonsters(pData);
 				_data->setPlayerProperty(attackSource, PLAYER_PROP_TYPE::CURRENT_SP, iCurrentSP - iCost);
-				_playerLayer->onPlayerPropModified(2, 0 - attackSource, 0 - iCost);
+				_playerLayer->onPlayerPropModified(2, attackSource, 0 - iCost);
 			}
 			else
 				CCLOG("No enough SP");
@@ -499,6 +504,11 @@ void BattleFieldScene::tableCellTouched(TableView* table, TableViewCell* cell)
 	switchList(false);
 }
 
+Size BattleFieldScene::cellSizeForTable(TableView *table)
+{ 
+	return Size(CELL_WIDHT, CELL_HEIGHT); 
+}
+
 void BattleFieldScene::tableCellHighlight(TableView* table, TableViewCell* cell)
 {
 	ListItemCell *newcell = (ListItemCell*)cell;
@@ -544,11 +554,11 @@ void BattleFieldScene::effectOnMonster(int monsterNo, AbstractListItemData* pEff
 			if (monsterCurrentHP <= effIter->second) {
 				_data->setMonsterStatusAt(monsterNo, BATTLER_STATUS::DEAD);
 				_data->setMonsterProperty(monsterNo, PLAYER_PROP_TYPE::CURRENT_HP, 0);
-				_monsterLayer->onAttacked(monsterNo, 0 - effIter->second, (effIter->second / monsterMaxHP)*100.0f, true);
+				_monsterLayer->onAttacked(monsterNo, 0 - effIter->second, ((float)effIter->second / (float)monsterMaxHP)*100.0f, true);
 			}
 			else {
 				_data->setMonsterProperty(monsterNo, PLAYER_PROP_TYPE::CURRENT_HP, monsterCurrentHP - effIter->second);
-				_monsterLayer->onAttacked(monsterNo, 0 - effIter->second, (effIter->second / monsterMaxHP)*100.0f, false);
+				_monsterLayer->onAttacked(monsterNo, 0 - effIter->second, ((float)effIter->second / (float)monsterMaxHP)*100.0f, false);
 			}
 			break;
 		case EFFECT_ATTRIBUTE::CURRENT_SP:

@@ -162,9 +162,10 @@ void PlayerLayer::beforeSpecialAttack(int playerNo)
 	float middleX = Director::getInstance()->getVisibleSize().width/2;
 	for each (pair<int, tuple<string, int, int, int, int>> var in _heads) {
 		if (var.first != playerNo)
-			this->getChildByTag(var.first)->runAction(FadeOut::create(0.5f));
+			//this->getChildByTag(var.first)->runAction(FadeOut::create(0.5f));
+			((HeadSprite*)this->getChildByTag(var.first))->hide(0.5f);
 	}
-	float horiDistance = middleX*0.5 - this->getChildByTag(playerNo)->getPositionX();
+	float horiDistance = middleX - this->getChildByTag(playerNo)->getPositionX();
 	this->getChildByTag(playerNo)->runAction(MoveBy::create(0.5f, Vec2(horiDistance, 0)));
 }
 
@@ -178,6 +179,7 @@ void PlayerLayer::afterSpecialAttack(int playerNo)
 	this->getChildByTag(playerNo)->runAction(MoveBy::create(1.0f, Vec2(horiDistance, 0)));
 	for each (pair<int, tuple<string, int, int, int, int>> var in _heads) {
 		if (var.first != playerNo)
-			this->getChildByTag(var.first)->runAction(FadeIn::create(0.5f));
+			//this->getChildByTag(var.first)->runAction(FadeIn::create(0.5f));
+			((HeadSprite*)this->getChildByTag(var.first))->show(0.5f);
 	}
 }

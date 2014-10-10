@@ -17,8 +17,6 @@ static const int BUBBLE_SPEED = 50;
 static const int BUBBLE_SUCCESS_HIT = 10;
 
 static float PLAYER_HEAD_HEIGHT = 0.0f;
-static char MAGIC_AVA[] = "magic_ava";
-static char MAGIC_UNAVA[] = "magic_unava";
 
 static const int TOP_HP = 999;
 
@@ -35,4 +33,7 @@ static const char PLAYER_ONE[] = "我方单体";
 static const char PLAYER_ALL[] = "我方全体";
 
 static const char NUMBER_SPRITE_NAME_TEMPLATE[] = "number_%c";
+
+static const int CELL_WIDHT = 300;
+static const int CELL_HEIGHT = 40;
 #endif

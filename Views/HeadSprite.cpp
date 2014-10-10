@@ -40,14 +40,9 @@ bool HeadSprite::init()
 	CCLOG("%s", pName);
 	
 	this->setTexture(pName);
-    Sprite *hp = Sprite::create(HP_BAR);
-    Sprite *sp = Sprite::create(SP_BAR);
-    if (!hp || !sp) {
-        return false;
-    }
     
     //Player HP bar
-    ProgressTimer *hpBarTimer = ProgressTimer::create(hp);
+	ProgressTimer *hpBarTimer = ProgressTimer::create(Sprite::create(HP_BAR));
     hpBarTimer->setType(ProgressTimer::Type::BAR);
     hpBarTimer->setMidpoint(Vec2(0,0));
     hpBarTimer->setBarChangeRate(Vec2(1,0));
@@ -56,7 +51,7 @@ bool HeadSprite::init()
     addChild(hpBarTimer,1,"hpbar");
     
     //Player SP bar
-    ProgressTimer *spBarTimer = ProgressTimer::create(sp);
+	ProgressTimer *spBarTimer = ProgressTimer::create(Sprite::create(SP_BAR));
     spBarTimer->setType(ProgressTimer::Type::BAR);
     spBarTimer->setMidpoint(Vec2(0,0));
     spBarTimer->setBarChangeRate(Vec2(1, 0));
@@ -92,6 +87,8 @@ bool HeadSprite::init()
 	digit->setOpacity(0);
 	digit->setVisible(false);
 
+	this->setCascadeOpacityEnabled(true);
+
     return true;
 }
 
@@ -126,16 +123,32 @@ void HeadSprite::onValueModified(int value, int type)
 	float deltaPer = ((float)abs(value) / (float)maxValue)  * 100.0f;
     float per = bar->getPercentage();
 	if (newValue == 0)
-		bar->runAction(ProgressFromTo::create(0.5f, per, 0));
+		bar->runAction(ProgressFromTo::create(1.0f, per, 0));
 	else 
 		if (value > 0)
-			bar->runAction(ProgressFromTo::create(0.5f, per, per + deltaPer));
+			bar->runAction(ProgressFromTo::create(1.0f, per, per + deltaPer));
 		else
-			bar->runAction(ProgressFromTo::create(0.5f, per, per - deltaPer));
+			bar->runAction(ProgressFromTo::create(1.0f, per, per - deltaPer));
 	
 	//Show damage number
 	if (type == 1 && value < 0) {
 		DigitSprite *digit = (DigitSprite*)getChildByName("digit");
 		digit->showDigit(abs(value));
 	}
+}
+
+void HeadSprite::hide(float duration)
+{
+	this->runAction(FadeOut::create(duration));
+	for (auto child : this->getChildren())
+		if (child->getOpacity() > 0.0)
+			child->setOpacity(0);
+}
+
+void HeadSprite::show(float duration)
+{
+	this->runAction(FadeIn::create(duration));
+	for (auto child : this->getChildren())
+		if (child->getOpacity() == 0.0)
+			child->setOpacity(255);
 }

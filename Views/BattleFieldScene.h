@@ -37,6 +37,7 @@ public:
 	void tableCellTouched(TableView* table, TableViewCell* cell);
 	void tableCellHighlight(TableView* table, TableViewCell* cell);
 	void tableCellUnhighlight(TableView* table, TableViewCell* cell);
+	Size cellSizeForTable(TableView *table);
 
 	int getSelectedItemId() { return _selectedListItemId; }
 

@@ -24,7 +24,7 @@ bool MonsterHeadSprite::init()
 	hpBarTimer->setType(ProgressTimer::Type::BAR);
 	hpBarTimer->setMidpoint(Vec2(0, 0));
 	hpBarTimer->setBarChangeRate(Vec2(1, 0));
-	hpBarTimer->setPosition(getPositionX(),	getContentSize().height);
+	hpBarTimer->setPosition(getContentSize().width*0.5,	getContentSize().height);
 	hpBarTimer->setOpacity(0);
 	hpBarTimer->setPercentage(100.0);
 	addChild(hpBarTimer, 1, "hpbar");
@@ -33,7 +33,8 @@ bool MonsterHeadSprite::init()
 	DigitSprite *digit = DigitSprite::create();
 	digit->setPosition(getAnchorPointInPoints());
 	addChild(digit, 3, "digit");
-	//digit->setVisible(false);
+
+	this->setCascadeOpacityEnabled(true);
 	return true;
 }
 

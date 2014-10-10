@@ -26,6 +26,8 @@ public:
 	static HeadSprite* createWithNameAndValues(const string name, const int maxHp, const int currentHp, const int maxSp, const int currentSp);
 
 	virtual void onValueModified(int value, int type);	//type 1: HP, 2:SP
+	void hide(float duration);
+	void show(float duration);
 protected:
     string _name;
 	int _maxHp;

@@ -1,6 +1,7 @@
 #include "HelloWorldScene.h"
 #include "Resources.h"
 #include "Views\DigitSprite.h"
+#include "Views\MonsterHeadSprite.h"
 
 USING_NS_CC;
 
@@ -75,9 +76,9 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
 
-	DigitSprite *digit = DigitSprite::create();
-	digit->setPosition(200,200);
-	addChild(digit, 3, "digit");
+	MonsterHeadSprite *monster = MonsterHeadSprite::create("É­ÁÖÁ­Êó");
+	monster->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	this->addChild(monster, 0);
 		
     return true;
 }
