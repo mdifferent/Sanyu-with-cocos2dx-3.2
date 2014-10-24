@@ -8,7 +8,7 @@ bool DigitSprite::init()
 		return false;
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile(DIGIT_PLIST_PATH, DIGIT_PNG_PATH);
 	extendSpriteBatch(DEFAULT_DAMAGE_DIGIT);
-	setOpacity(255);
+	this->setCascadeOpacityEnabled(false);
 	return true;
 }
 
@@ -25,17 +25,9 @@ void DigitSprite::showDigit(int value)
 		sprintf(cnum, NUMBER_SPRITE_NAME_TEMPLATE, num.at(len - i - 1));
 		SpriteFrame *spriteFrame = SpriteFrameCache::getInstance()->getSpriteFrameByName(cnum);
 		sprite->setSpriteFrame(spriteFrame);
-		sprite->setOpacity(255);
-		//sprite->runAction(FadeIn::create(0.5f));
-		//sprite->runAction(Sequence::create(FadeTo::create(0.5f, 255), MoveBy::create(0.5f, Vec2(0, 50)), NULL));
-		sprite->runAction(MoveBy::create(0.5f, Vec2(0, 50)));
+		sprite->runAction(Sequence::create(FadeIn::create(0.1f), DelayTime::create(0.1*i), MoveBy::create(0.3f, Vec2(0, 30)), 
+			DelayTime::create(0.1*(len-i)), FadeOut::create(0.1f), MoveBy::create(0.1f, Vec2(0, -30)), NULL));
 	}
-	
-	for each (Node* sprite in getChildren()) {
-		if (sprite->getOpacity() > 0)
-			sprite->runAction(Sequence::createWithTwoActions(FadeOut::create(0.5f),	MoveBy::create(0.1f, Vec2(0, -50))));
-	}
-		
 }
 
 void DigitSprite::extendSpriteBatch(int delta)

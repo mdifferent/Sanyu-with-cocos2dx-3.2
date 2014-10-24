@@ -227,11 +227,15 @@ void MonsterLayer::onMagicMatrixUnavailable()
 void MonsterLayer::onAttacked(int target, int deltaValue, float deltaPercent, bool isDead) {
 	MonsterHeadSprite *monster = dynamic_cast<MonsterHeadSprite*>(this->getChildByTag(target));
 	monster->onHPModified(deltaValue, deltaPercent, isDead);
-	if (isDead) {
-		monster->runAction(FadeOut::create(0.5f));
-		//removeChildByTag(target);
-		_heads.erase(target);
-	}
+	if (isDead)
+		monster->runAction(Sequence::createWithTwoActions(FadeOut::create(0.5f), 
+			CallFunc::create(CC_CALLBACK_0(MonsterLayer::removeHead, this, target))));
+}
+
+void MonsterLayer::removeHead(int num)
+{
+	removeChildByTag(num);
+	_heads.erase(num);
 }
 
 void MonsterLayer::initSpecialAttack(int monsterNo)
@@ -247,14 +251,15 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 	timeBarFull->setPercentage(100.0f);
 	MonsterHeadSprite *monster = (MonsterHeadSprite*)getChildByTag(monsterNo);
 
-	int monsterCount = _heads.size();
-	for (int i = 0; i < monsterCount; i++) {
-		if (i != monsterNo)
-			getChildByTag(i)->runAction(FadeOut::create(0.1f));
+	map<int, string>::const_iterator iter = _heads.begin();
+	while (iter != _heads.end()) {
+		if (iter->first != monsterNo)
+			getChildByTag(iter->first)->runAction(FadeOut::create(0.1f));
+		iter++;
 	}
 	float screenWidth = Director::getInstance()->getVisibleSize().width;
 	float screenHeight = Director::getInstance()->getVisibleSize().height;
-	monster->runAction(MoveTo::create(0.5f, Vec2(screenWidth*0.5, screenHeight*0.5)));
+	//monster->runAction(MoveTo::create(0.5f, Vec2(screenWidth*0.5, screenHeight*0.5)));
 	timeBarEmpty->runAction(FadeIn::create(0.1f));
 	timeBarFull->runAction(FadeIn::create(0.1f));
 	longHPBar->runAction(FadeIn::create(0.1f));
@@ -265,14 +270,18 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 	float bottomBorder = middlePoint.y - monsterSize.height*0.5;
 	float leftBorder = middlePoint.x - monsterSize.width*0.5;
 	float rightBorder = middlePoint.x + monsterSize.width*0.5;
+	srand(time(0));
+	while (_bubbles.size() < BUBBLE_MAX_COUNT*2) {
+		float r = _bubbles.size() % 2 == 0 ? CCRANDOM_0_1() : CCRANDOM_0_1() + 1;
+		float maxTime = monsterSize.height / BUBBLE_SPEED;
+		float delayTime = r * maxTime;
 
-	while (_bubbles.size() < BUBBLE_MAX_COUNT) {
 		Sprite *bubble = Sprite::createWithSpriteFrameName("paopao_m1");
-		float xpos = leftBorder + CCRANDOM_0_1() * monsterSize.width;
+		float xpos = leftBorder + rand() % (int)monsterSize.width;
 		bubble->setPosition(Vec2(xpos, bottomBorder));
 		bubble->setOpacity(0);
 		addChild(bubble, 3);
-		float delayTime = CCRANDOM_0_1() * monsterSize.height / BUBBLE_SPEED;
+		
 		SpriteFrameCache *cache = SpriteFrameCache::getInstance();
 		Animation *breakAnimation = Animation::create();
 		breakAnimation->addSpriteFrame(cache->getSpriteFrameByName("paopao_m1"));
@@ -283,13 +292,11 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 		breakAnimation->setLoops(-1);
 		breakAnimation->setRestoreOriginalFrame(true);
 		breakAnimation->setDelayPerUnit(0.1f);
-		ActionInterval *moveAction = Sequence::create(FadeIn::create(0.1f),
+		ActionInterval *moveAction = Sequence::create(DelayTime::create(delayTime), FadeIn::create(0.1f),
 			MoveBy::create(monsterSize.height / BUBBLE_SPEED, Vec2(0, monsterSize.height)),
-			FadeOut::create(0.1f),
-			MoveBy::create(0.01f, Vec2(0, -monsterSize.height)), NULL);
+			FadeOut::create(0.1f), MoveBy::create(0.01f, Vec2(0, -monsterSize.height)), NULL);
 		moveAction->setTag(10);
 		bubble->runAction(Animate::create(breakAnimation));
-		bubble->runAction(DelayTime::create(delayTime));
 		bubble->runAction(RepeatForever::create(moveAction));
 		_bubbles.pushBack(bubble);
 	}
@@ -322,9 +329,12 @@ void MonsterLayer::onSpecialAttack(float ft)
 		else {
 			_isBubbleFailed = true;
 		}
-		for (int i = 0; i<_heads.size(); ++i)
-			if ( i != _target)
-				this->getChildByTag(i)->runAction(FadeIn::create(0.1f));
+		map<int, string>::const_iterator iter = _heads.begin();
+		while (iter != _heads.end()) {
+			if (iter->first != _target)
+				getChildByTag(iter->first)->runAction(FadeIn::create(0.1f));
+			iter++;
+		}
 		_status = SPECIAL_ATTACK_FINISHED;
 	}
 }

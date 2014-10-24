@@ -75,11 +75,16 @@ bool HelloWorld::init()
 
     // add the sprite as a child to this layer
     this->addChild(sprite, 0);
-
+	/*
 	MonsterHeadSprite *monster = MonsterHeadSprite::create("É­ÁÖÁ­Êó");
 	monster->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	this->addChild(monster, 0);
-		
+	this->addChild(monster, 0);*/
+
+	DigitSprite* digit = DigitSprite::create();
+	digit->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
+	this->addChild(digit, 0);
+	digit->showDigit(21);
+
     return true;
 }
 

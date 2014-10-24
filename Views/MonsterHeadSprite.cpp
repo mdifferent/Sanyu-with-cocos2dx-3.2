@@ -33,6 +33,7 @@ bool MonsterHeadSprite::init()
 	DigitSprite *digit = DigitSprite::create();
 	digit->setPosition(getAnchorPointInPoints());
 	addChild(digit, 3, "digit");
+	digit->setOpacity(0);
 
 	this->setCascadeOpacityEnabled(true);
 	return true;

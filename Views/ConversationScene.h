@@ -37,7 +37,6 @@ private:
     DialogueLayer* _speakLayer;
     TextLayer* _textLayer;
     ChoiceLayer* _choiceBtnLayer;
-
 };
 
 #endif

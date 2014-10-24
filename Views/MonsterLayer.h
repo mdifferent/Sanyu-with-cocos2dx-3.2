@@ -47,6 +47,7 @@ public:
 
 private:
 	bool initTouchListener();
+	void removeHead(int num);
 
 	map<int, string> _heads;
 	int _target;
