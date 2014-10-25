@@ -106,6 +106,7 @@ bool BattleFieldScene::init()
 	}
 
 	_roundOwner = PLAYER;
+	_roundCounter = 0;
 	this->schedule(SEL_SCHEDULE(&BattleFieldScene::updateGame), 0.5f);
 
 	return true;
@@ -120,8 +121,66 @@ void BattleFieldScene::updateGame(float ft)
 	case COMPUTER:
 		runComputerRound();
 	}
+	_roundCounter++;
+	if (checkBattleEnd())
+		//TODO : FINISH GAME
 	if (checkRoundFinished())
-		switchOwner();
+		switchOwner();		
+}
+
+bool BattleFieldScene::checkBattleEnd()
+{
+	if (checkLose() || checkWin())
+		return true;
+	else
+		return false;
+}
+
+bool BattleFieldScene::checkLose()
+{
+	bool isAllDead = true;
+	for (int i = 0; i < _data->getPlayerCount(); i++) {
+		if (_data->getPlayerStatusAt(i) != BATTLER_STATUS::DEAD) {
+			isAllDead = false;
+			break;
+		}
+	}
+	switch (_data->getLoseCondition()) {
+	case LOSE_CONDITION::ALL_DEAD:
+		return isAllDead;
+	case LOSE_CONDITION::SOMEONE_DEAD:
+		for each (int i in _data->getVipList()) {
+			if (_data->getPlayerStatusAt(i) == BATTLER_STATUS::DEAD)
+				return true;
+		}
+	case LOSE_CONDITION::ROUNDS_REACH:
+		if (_roundCounter >= _data->getRoundLimit() || isAllDead)
+			return true;
+	case LOSE_CONDITION::ALWAYS:
+		if (_roundCounter >= _data->getRoundLimit())
+			return true;
+	}
+	return false;
+}
+
+bool BattleFieldScene::checkWin()
+{
+	bool isAllDead = true;
+	for (int i = 0; i < _data->getMonsterCount(); i++) {
+		if (_data->getMonsterStatusAt(i) != BATTLER_STATUS::DEAD) {
+			isAllDead = false;
+			break;
+		}
+	}
+	switch (_data->getWinCondition()) {
+	case WINNING_CONDITIONS::KILL_ALL:
+		return isAllDead;
+	case WINNING_CONDITIONS::KILL_SPEC:
+	case WINNING_CONDITIONS::KEEP_ALIVE:
+	case WINNING_CONDITIONS::NEVER:
+		return false;
+	}
+	return false;
 }
 
 void BattleFieldScene::runPlayerRound()
@@ -324,17 +383,9 @@ void BattleFieldScene::runComputerRound()
 		CCLOG("Monster %d", i);
 		if (_data->getMonsterStatusAt(i) != BATTLER_STATUS::DEAD) {
 			do {
-				attackTarget = rand() % playerCount;
+				attackTarget = rand() % playerCount;		//Attack on random player
 			} while (_data->getPlayerStatusAt(attackTarget) == BATTLER_STATUS::DEAD);
-				
-			/*
-			for (int j = 0; j<playerCount; j++) {
-				if (_data->getPlayerStatusAt(j) != BATTLER_STATUS::DEAD &&
-					_data->getPlayerProperty(j, PLAYER_PROP_TYPE::CURRENT_HP)< iMinHP) {
-					iMinHP = _data->getPlayerProperty(j, PLAYER_PROP_TYPE::CURRENT_HP);
-					attackTarget = j;
-				}
-			}*/
+
 			int defenseValue = _data->getPlayerProperty(attackTarget, PLAYER_PROP_TYPE::MELEE_DEFENSE);
 			int attackValue = _data->getMonsterProperty(i, PLAYER_PROP_TYPE::MELEE_ATTACK);
 			int damageValue = _data->getPlayerStatusAt(attackTarget) == BATTLER_STATUS::DEFENSE ? attackValue - defenseValue : attackValue;

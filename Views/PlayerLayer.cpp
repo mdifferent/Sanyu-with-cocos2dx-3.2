@@ -176,7 +176,7 @@ void PlayerLayer::afterSpecialAttack(int playerNo)
 	float playerPosX = this->getChildByTag(playerNo)->getPositionX();
 	float headWidth = this->getChildByTag(playerNo)->getContentSize().width;
 	float horiDistance = middleX + (playerNo - playerCount*0.5 + 0.5)*headWidth - playerPosX;
-	this->getChildByTag(playerNo)->runAction(MoveBy::create(1.0f, Vec2(horiDistance, 0)));
+	this->getChildByTag(playerNo)->runAction(MoveBy::create(0.5f, Vec2(horiDistance, 0)));
 	for each (pair<int, tuple<string, int, int, int, int>> var in _heads) {
 		if (var.first != playerNo)
 			//this->getChildByTag(var.first)->runAction(FadeIn::create(0.5f));

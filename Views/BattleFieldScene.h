@@ -49,10 +49,14 @@ private:
 	void switchList(bool isOpen);
 	void effectOnMonsters(AbstractListItemData* pEffectSource);
 	void effectOnMonster(int monsterNo, AbstractListItemData* pEffectSource);
+	bool checkBattleEnd();
+	bool checkLose();
+	bool checkWin();
+
 
 private:
 	int							_sceneId;
-	BattleData*		_data;
+	BattleData*					_data;
 	ROUND_OWNER					_roundOwner;
 
 	BackgroundLayer*			_bgLayer;
@@ -62,6 +66,7 @@ private:
 	ListLayer*					_listLayer;
 
 	int _selectedListItemId;
+	int _roundCounter;
 
 	map<int, bool> _playerFinishFlag;
 	map<int, bool> _monsterFinishFlag;

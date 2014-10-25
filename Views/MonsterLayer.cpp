@@ -259,7 +259,7 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 	}
 	float screenWidth = Director::getInstance()->getVisibleSize().width;
 	float screenHeight = Director::getInstance()->getVisibleSize().height;
-	//monster->runAction(MoveTo::create(0.5f, Vec2(screenWidth*0.5, screenHeight*0.5)));
+	monster->runAction(MoveTo::create(0.5f, Vec2(screenWidth*0.5, screenHeight*0.5)));
 	timeBarEmpty->runAction(FadeIn::create(0.1f));
 	timeBarFull->runAction(FadeIn::create(0.1f));
 	longHPBar->runAction(FadeIn::create(0.1f));
@@ -308,6 +308,8 @@ void MonsterLayer::initSpecialAttack(int monsterNo)
 
 void MonsterLayer::onSpecialAttack(float ft)
 {
+	float screenWidth = Director::getInstance()->getVisibleSize().width;
+	float screenHeight = Director::getInstance()->getVisibleSize().height;
 	ProgressTimer *longHPBar = (ProgressTimer*)getChildByName("hpbar");
 	ProgressTimer *timeBarFull = (ProgressTimer*)getChildByName("timebar_full");
 	auto timeBarEmpty = getChildByName("timebar_empty");
@@ -333,6 +335,8 @@ void MonsterLayer::onSpecialAttack(float ft)
 		while (iter != _heads.end()) {
 			if (iter->first != _target)
 				getChildByTag(iter->first)->runAction(FadeIn::create(0.1f));
+			else
+				getChildByTag(iter->first)->runAction(MoveTo::create(0.5f, Vec2(screenWidth*0.5, screenHeight*0.5)));
 			iter++;
 		}
 		_status = SPECIAL_ATTACK_FINISHED;

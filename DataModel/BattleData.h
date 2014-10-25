@@ -37,6 +37,10 @@ using namespace std;
 		string getMapName() const { return _mapName; }
 		string getBgmName() const { return _mapBgm; }
 		void setMapName(string name) { _mapName = name; }
+		LOSE_CONDITION getLoseCondition() { return _loseCon; }
+		WINNING_CONDITIONS getWinCondition() { return _winCon; }
+		int getRoundLimit() { return _roundLimit; }
+		list<int> getVipList() { return _vips; }
 
 		map<int, string>* getPlayerNames();
 		map<int, string>* getMonsterNames();
@@ -67,5 +71,8 @@ using namespace std;
 		map<int, MonsterData*>		_monsters;
 		WINNING_CONDITIONS			_winCon;
 		LOSE_CONDITION				_loseCon;
+
+		int							_roundLimit;		//Useful when winning/lose condition has round limit
+		list<int>					_vips;				//Useful when winning condition has some keep alive
 	};
 #endif

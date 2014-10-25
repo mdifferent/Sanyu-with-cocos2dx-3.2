@@ -63,6 +63,11 @@ BattleData::BattleData(void)
 	_monsters.insert(std::pair<int, MonsterData*>(0, pdm1));
 	_monsters.insert(std::pair<int, MonsterData*>(1, pdm2));
 	_monsters.insert(std::pair<int, MonsterData*>(2, pdm3));
+
+	_winCon = WINNING_CONDITIONS::KILL_ALL;
+	_loseCon = LOSE_CONDITION::ALL_DEAD;
+
+	_roundLimit = 0;
 }
 
 BattleData::~BattleData()
