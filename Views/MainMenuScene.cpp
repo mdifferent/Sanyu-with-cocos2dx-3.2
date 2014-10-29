@@ -77,6 +77,7 @@ void MainMenuScene::startCallback(Ref* pSender)
 		exMenu->runAction(FadeOut::create(0.5f));
 	}
 	Director::getInstance()->replaceScene(BattleFieldScene::scene(1));
+	//Director::getInstance()->pushScene(BattleFieldScene::scene(1));
 }
 
 void MainMenuScene::loadCallback(Ref* pSender)

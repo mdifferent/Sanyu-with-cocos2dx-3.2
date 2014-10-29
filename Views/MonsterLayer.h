@@ -22,11 +22,11 @@ public:
 		SLEEP,
 	};
 
-	MonsterLayer(const map<int, string>* names) { _heads = *names; }
-	~MonsterLayer() { delete &_heads; }
+	MonsterLayer(const map<int, string> names) { _heads = names; }
+	~MonsterLayer() {}
 
 	bool init();
-	static MonsterLayer* createWithNames(const map<int, string>*);
+	static MonsterLayer* createWithNames(const map<int, string>);
 
 	void onMagicMatrixAvailable();
 	void onMagicMatrixUnavailable();

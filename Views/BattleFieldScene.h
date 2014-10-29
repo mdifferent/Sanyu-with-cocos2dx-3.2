@@ -50,8 +50,6 @@ private:
 	void effectOnMonsters(AbstractListItemData* pEffectSource);
 	void effectOnMonster(int monsterNo, AbstractListItemData* pEffectSource);
 	bool checkBattleEnd();
-	bool checkLose();
-	bool checkWin();
 
 
 private:
@@ -67,6 +65,7 @@ private:
 
 	int _selectedListItemId;
 	int _roundCounter;
+	int _isWin;
 
 	map<int, bool> _playerFinishFlag;
 	map<int, bool> _monsterFinishFlag;

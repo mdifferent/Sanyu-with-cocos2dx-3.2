@@ -10,6 +10,7 @@
 #include "CharacterLayer.h"
 #include "DialogueLayer.h"
 #include "BackgroundLayer.h"
+#include "DataModel\GlobalConfig.h"
 
 bool ConversationScene::init()
 {
@@ -17,8 +18,8 @@ bool ConversationScene::init()
         return false;
     }
     
-    string background = "";
-    string dialogueWindowBg = "";
+    string background = "images/bk.png";
+	string dialogueWindowBg = "images/dialogue/text1.png";
     
     _bgLayer = BackgroundLayer::create(background);
     _charLayer = CharacterLayer::create();
@@ -31,27 +32,30 @@ void ConversationScene::changeBackground(const string name, ActionInterval *acti
 {
     _speakLayer->runAction(FadeOut::create(0.5f));
     _charLayer->runAction(FadeOut::create(0.5f));
-    _bgLayer->runAction(action);
+	_bgLayer->switchBg(name, BG_TRANSITION_TYPE::FADE);
 }
 
-void changeBackground(const string& name, ActionInterval *action)
+void ConversationScene::speaking(const string name, const string text, const bool showHead)
 {
-    
+	if (name.length() == 0)
+		_speakLayer->showText(text);
+	else if (showHead)
+		_speakLayer->showTextWithNameAndHead(name, text);
+	else
+		_speakLayer->showTextWithName(name, text);
 }
-void changeCharacter(int position, const string& name)
+
+void ConversationScene::changeCharacter(int position, const string name)
 {
-    
+
 }
-void speaking(const string& name, const string& text)
-{
-    
-}
-void showChoice(map<int,string> choices)
+
+void ConversationScene::showChoice(map<int, string> choices)
 {
     
 }
 
-void switchDialogueWindow()
+void ConversationScene::switchDialogueWindow()
 {
     
 }

@@ -30,7 +30,7 @@ public:
 	};
 
 	PlayerLayer(const map<int, tuple<string,int,int,int,int>> names) { _heads = names; }
-	~PlayerLayer() { delete &_heads; }
+	~PlayerLayer() {}
 
 	bool init();
 	static PlayerLayer* createWithNames(const map<int, tuple<string, int, int, int, int>>);

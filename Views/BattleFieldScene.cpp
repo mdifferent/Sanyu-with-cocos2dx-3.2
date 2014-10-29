@@ -1,3 +1,4 @@
+#include "MainMenuScene.h"
 #include "BattleFieldScene.h"
 #include "BackgroundLayer.h"
 #include "InfoBarLayer.h"
@@ -107,6 +108,7 @@ bool BattleFieldScene::init()
 
 	_roundOwner = PLAYER;
 	_roundCounter = 0;
+	_isWin = -1;
 	this->schedule(SEL_SCHEDULE(&BattleFieldScene::updateGame), 0.5f);
 
 	return true;
@@ -121,64 +123,52 @@ void BattleFieldScene::updateGame(float ft)
 	case COMPUTER:
 		runComputerRound();
 	}
-	_roundCounter++;
-	if (checkBattleEnd())
-		//TODO : FINISH GAME
-	if (checkRoundFinished())
-		switchOwner();		
+	if (checkBattleEnd()) {
+		//TODO : FINISH GAME LOGIC
+		if (_isWin == 1)
+			CCLOG("Win");
+		else if (_isWin == 0)
+			CCLOG("Lose");
+		//Director::getInstance()->popScene();
+		this->unschedule(SEL_SCHEDULE(&BattleFieldScene::updateGame));
+		Director::getInstance()->replaceScene(MainMenuScene::createScene());
+	}
+	if (checkRoundFinished()) {
+		switchOwner();
+		_roundCounter++;
+	}
+			
 }
 
 bool BattleFieldScene::checkBattleEnd()
 {
-	if (checkLose() || checkWin())
-		return true;
-	else
-		return false;
-}
-
-bool BattleFieldScene::checkLose()
-{
-	bool isAllDead = true;
+	bool isAllPlayerDead = true;
 	for (int i = 0; i < _data->getPlayerCount(); i++) {
 		if (_data->getPlayerStatusAt(i) != BATTLER_STATUS::DEAD) {
-			isAllDead = false;
+			isAllPlayerDead = false;
 			break;
 		}
 	}
-	switch (_data->getLoseCondition()) {
-	case LOSE_CONDITION::ALL_DEAD:
-		return isAllDead;
-	case LOSE_CONDITION::SOMEONE_DEAD:
-		for each (int i in _data->getVipList()) {
-			if (_data->getPlayerStatusAt(i) == BATTLER_STATUS::DEAD)
-				return true;
-		}
-	case LOSE_CONDITION::ROUNDS_REACH:
-		if (_roundCounter >= _data->getRoundLimit() || isAllDead)
-			return true;
-	case LOSE_CONDITION::ALWAYS:
-		if (_roundCounter >= _data->getRoundLimit())
-			return true;
-	}
-	return false;
-}
-
-bool BattleFieldScene::checkWin()
-{
-	bool isAllDead = true;
+	bool isAllMonsterDead = true;
 	for (int i = 0; i < _data->getMonsterCount(); i++) {
 		if (_data->getMonsterStatusAt(i) != BATTLER_STATUS::DEAD) {
-			isAllDead = false;
+			isAllMonsterDead = false;
 			break;
 		}
 	}
-	switch (_data->getWinCondition()) {
-	case WINNING_CONDITIONS::KILL_ALL:
-		return isAllDead;
-	case WINNING_CONDITIONS::KILL_SPEC:
-	case WINNING_CONDITIONS::KEEP_ALIVE:
-	case WINNING_CONDITIONS::NEVER:
-		return false;
+	LOSE_CONDITION loseCon = _data->getLoseCondition();
+	WINNING_CONDITIONS winCon = _data->getWinCondition();
+	if (loseCon == LOSE_CONDITION::ALL_DEAD) {
+		if (winCon == WINNING_CONDITIONS::KILL_ALL) {
+			if (isAllPlayerDead && !isAllMonsterDead) {
+				_isWin = 0;
+				return true;
+			}
+			else if (!isAllPlayerDead && isAllMonsterDead) {
+				_isWin = 1;
+				return true;
+			}
+		}
 	}
 	return false;
 }

@@ -99,11 +99,11 @@ map<int, string>* BattleData::getPlayerNames()
 	return names;
 }
 
-map<int, string>* BattleData::getMonsterNames()
+map<int, string> BattleData::getMonsterNames()
 {
-	map<int, string> *names = new map<int, string>();
+	map<int, string> names;
 	for each (pair<int, MonsterData*> var in _monsters)	{
-		names->insert(make_pair(var.first, var.second->getName()));
+		names.insert(make_pair(var.first, var.second->getName()));
 	}
 	return names;
 }

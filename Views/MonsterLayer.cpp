@@ -193,7 +193,7 @@ void MonsterLayer::onTouchEnded(Touch *touch, Event *pEvent)
 	}
 }
 
-MonsterLayer* MonsterLayer::createWithNames(const map<int, string>* names)
+MonsterLayer* MonsterLayer::createWithNames(const map<int, string> names)
 {
 	MonsterLayer *layer = new MonsterLayer(names);
 	if (layer && layer->init()) {

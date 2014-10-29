@@ -28,7 +28,7 @@ public:
     
     void changeBackground(const string name, ActionInterval *action);
     void changeCharacter(int position, const string name);
-    void speaking(const string name, const string text);
+	void speaking(const string name, const string text, const bool showHead = false);
     void showChoice(map<int,string> choices);
     void switchDialogueWindow();
 private:

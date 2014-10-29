@@ -43,7 +43,7 @@ using namespace std;
 		list<int> getVipList() { return _vips; }
 
 		map<int, string>* getPlayerNames();
-		map<int, string>* getMonsterNames();
+		map<int, string> getMonsterNames();
 		int getPlayerCount() { return _players.size(); }
 		int getMonsterCount() { return _monsters.size(); }
 

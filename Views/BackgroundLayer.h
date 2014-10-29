@@ -7,6 +7,11 @@
 USING_NS_CC;
 using namespace std;
 
+enum class BG_TRANSITION_TYPE {
+	FADE,
+	DISSOLVE
+};
+
 class BackgroundLayer : public Layer
 {
 public:
@@ -16,7 +21,13 @@ public:
 	CREATE_FUNC_WITH_STRING(BackgroundLayer, name);
 
 	void onEnter();
+
+	void switchBg(const string, BG_TRANSITION_TYPE, float para = 0.5f);
+	void showBg(ActionInterval*);
+	void hideBg(ActionInterval*);
 private:
 	string _bgName;
+	Sprite* _main;
+	Sprite* _next;
 };
 #endif

@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
 #include "HelloWorldScene.h"
 #include "Views/MainMenuScene.h"
+#include "Views\ConversationScene.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
 #include "../proj.win32/WIN32Utils.h"
 #endif 
@@ -37,8 +38,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
     // create a scene. it's an autorelease object
     //auto scene = HelloWorld::createScene();
-	auto scene = MainMenuScene::createScene();
-    // run
+	//auto scene = MainMenuScene::createScene();
+	auto scene = ConversationScene::create();
+	scene->speaking("", "asdfad");
+	// run
     director->runWithScene(scene);
 
     return true;
