@@ -13,8 +13,13 @@ bool BackgroundLayer::init()
 		CCLOG("Error in load bg map!");
 		return false;
 	}
+	else {
+		_main->setAnchorPoint(Vec2(0, 0));
+	}
+	
 
 	_next = Sprite::create();
+	_next->setAnchorPoint(Vec2(0, 0));
 	_next->setOpacity(0);
 
 	addChild(_main, 0);

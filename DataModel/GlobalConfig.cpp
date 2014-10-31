@@ -5,5 +5,14 @@ GlobalConfig* GlobalConfig::getInstance()
 {
 	if (_sharedInstance == NULL)
 		_sharedInstance = new GlobalConfig();
+
+	//TEST DATA
+	_sharedInstance->_fontPath = "";
+	_sharedInstance->_fontSize = 24;
+	_sharedInstance->_textDisplaySpeed = 5;
+	_sharedInstance->_font = "Arial";
+	_sharedInstance->_textLeftTop = Vec2(50,140);
+	_sharedInstance->_textRightBottom = Vec2(750,20);
+
 	return _sharedInstance;
 }

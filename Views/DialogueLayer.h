@@ -25,9 +25,9 @@ public:
 	CREATE_FUNC_WITH_STRING(DialogueLayer, bg);
     bool init();
     
-	void showText(const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize());
-	void showTextWithName(const string name, const string content, const string font =  "", const int size = GlobalConfig::getInstance()->getFontSize());
-	void showTextWithNameAndHead(const string name, const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize());
+	void showText(const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize(), Color3B color = Color3B::BLACK);
+	void showTextWithName(const string name, const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize(), Color3B color = Color3B::BLACK);
+	void showTextWithNameAndHead(const string name, const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize(), Color3B color = Color3B::BLACK);
 
 private:
     string _bg;

@@ -40,7 +40,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     //auto scene = HelloWorld::createScene();
 	//auto scene = MainMenuScene::createScene();
 	auto scene = ConversationScene::create();
-	scene->speaking("", "asdfad");
+	scene->speaking("", "ABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂå");
 	// run
     director->runWithScene(scene);
 

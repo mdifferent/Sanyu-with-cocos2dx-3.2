@@ -11,6 +11,9 @@
 #include "DialogueLayer.h"
 #include "BackgroundLayer.h"
 #include "DataModel\GlobalConfig.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
+#include "../proj.win32/WIN32Utils.h"
+#endif 
 
 bool ConversationScene::init()
 {
@@ -18,12 +21,15 @@ bool ConversationScene::init()
         return false;
     }
     
-    string background = "images/bk.png";
+    string background = "images/bk.jpg";
 	string dialogueWindowBg = "images/dialogue/text1.png";
     
     _bgLayer = BackgroundLayer::create(background);
     _charLayer = CharacterLayer::create();
     _speakLayer = DialogueLayer::create(dialogueWindowBg);
+
+	addChild(_bgLayer, 0);
+	addChild(_speakLayer, 2);
     
     return true;
 }
@@ -35,8 +41,14 @@ void ConversationScene::changeBackground(const string name, ActionInterval *acti
 	_bgLayer->switchBg(name, BG_TRANSITION_TYPE::FADE);
 }
 
-void ConversationScene::speaking(const string name, const string text, const bool showHead)
+void ConversationScene::speaking(string name, string text, const bool showHead)
 {
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	if (name.length() > 0)
+		GBKToUTF(name);
+	GBKToUTF(text);
+#endif
 	if (name.length() == 0)
 		_speakLayer->showText(text);
 	else if (showHead)
