@@ -58,32 +58,60 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
     
-    auto label = LabelTTF::create("Hello World", "Arial", 24);
+    auto label = Label::create();
+	label->setDimensions(400, 100);
+	label->setLineBreakWithoutSpace(true);
+	label->setString("123456789012345678901234567890 123456789012345678901234567890 12345678901234567890");
+	label->setSystemFontName("Arial");
+	label->setSystemFontSize(24);
     
     // position the label on the center of the screen
-    label->setPosition(Vec2(origin.x + visibleSize.width/2,
-                            origin.y + visibleSize.height - label->getContentSize().height));
+    //label->setPosition(Vec2(origin.x + visibleSize.width/2,origin.y + visibleSize.height - label->getContentSize().height));
+	label->setAnchorPoint(Vec2(0, 1));
+	label->setPosition(Vec2(100, 100));
 
     // add the label as a child to this layer
-    this->addChild(label, 1);
+    //this->addChild(label, 1);
 
     // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("HelloWorld.png");
+    auto sprite = Sprite::create("images/bk.jpg");
 
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
     // add the sprite as a child to this layer
-    this->addChild(sprite, 0);
+    //this->addChild(sprite, 0);
+
 	/*
 	MonsterHeadSprite *monster = MonsterHeadSprite::create("É­ÁÖÁ­Êó");
 	monster->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
-	this->addChild(monster, 0);*/
+	this->addChild(monster, 0);
 
 	DigitSprite* digit = DigitSprite::create();
 	digit->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y));
 	this->addChild(digit, 0);
-	digit->showDigit(21);
+	digit->showDigit(21);*/
+	
+	auto move1 = ScaleTo::create(3.0f, 30, 1);
+	auto clip1 = LayerColor::create(Color4B::BLACK, 24, 24);
+	clip1->setPosition(Vec2(76, 76));
+
+	auto move2 = ScaleTo::create(3.0f, 30, 1);
+	auto clip2 = LayerColor::create(Color4B::BLACK, 24, 24);
+	clip2->setPosition(Vec2(76, 52));
+
+
+	Node* stencil = Node::create();
+	stencil->addChild(clip1);
+	stencil->addChild(clip2);
+
+	ClippingNode* clippingNode = ClippingNode::create(stencil);
+	clippingNode->addChild(label,2);
+
+	addChild(clippingNode);
+
+	clip1->runAction(move1);
+	clip2->runAction(Sequence::create(DelayTime::create(3.0f), move2, NULL));
 
     return true;
 }
@@ -95,8 +123,9 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
 	return;
 #endif
+	/*
 	DigitSprite *digit = (DigitSprite*)getChildByName("digit");
-	digit->showDigit(73);
+	digit->showDigit(73);*/
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
