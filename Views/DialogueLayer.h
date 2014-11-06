@@ -19,7 +19,8 @@ using namespace std;
 
 enum class DIALOGUE_STATUS {
 	NORMAL,
-	DISPLAYING
+	DISPLAYING,
+	FINISHED
 };
 
 class DialogueLayer : public Layer
@@ -34,8 +35,11 @@ public:
 	void showTextWithName(const string name, const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize(), Color3B color = Color3B::BLACK);
 	void showTextWithNameAndHead(const string name, const string content, const string font = "", const int size = GlobalConfig::getInstance()->getFontSize(), Color3B color = Color3B::BLACK);
 
-	void onSpeakFinished(Node* sender);
-
+	void onLineFinished(Node* sender);
+	void onClicked();
+	void forceSpeakComplete();
+	void clearText();
+	CC_SYNTHESIZE(DIALOGUE_STATUS, _status, Status);
 private:
 	void displayDialogue(const int fontsize, bool skipFirstLine);
 
@@ -44,7 +48,6 @@ private:
     string _content;
 
 	Label *_contentLabel;
-	DIALOGUE_STATUS _status;
 
 };
 

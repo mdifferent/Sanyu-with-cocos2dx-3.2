@@ -7,6 +7,7 @@
 //
 
 #include "DialogueLayer.h"
+#include "../ScriptProcessor.h"
 
 
 DialogueLayer::DialogueLayer(const string bg)
@@ -62,7 +63,48 @@ void DialogueLayer::showTextWithName(const string name, const string content, co
 
 void DialogueLayer::showTextWithNameAndHead(const string name, const string content, const string font, const int size, Color3B color)
 {
+	//TODO
+}
 
+void DialogueLayer::onClicked()
+{
+	switch (_status)
+	{
+	case DIALOGUE_STATUS::NORMAL:
+		ScriptProcessor::getInstance()->nextLine();
+		break;
+	case DIALOGUE_STATUS::DISPLAYING:
+		forceSpeakComplete();
+		break;
+	case DIALOGUE_STATUS::FINISHED:
+		clearText();
+		_status = DIALOGUE_STATUS::NORMAL;
+		break;
+	default:
+		break;
+	}
+}
+
+void DialogueLayer::forceSpeakComplete()
+{
+	int textAreaMaxWidth = GlobalConfig::getInstance()->getTextAreaWidth();
+
+	auto node = dynamic_cast<ClippingNode*>(this->getChildByName("clippernode"));
+	auto stencil = node->getStencil();
+	for (Node* node : stencil->getChildren()) {
+		node->cleanup();
+		int fontsize = node->getContentSize().width;
+		int charsPerLine = textAreaMaxWidth / fontsize;
+		node->setScaleX(2 * charsPerLine + 1);
+	}
+
+	_status = DIALOGUE_STATUS::FINISHED;
+}
+
+void DialogueLayer::clearText()
+{
+	_contentLabel->setString("");
+	this->removeChildByName("clippernode");
 }
 
 void DialogueLayer::displayDialogue(const int fontsize, bool skipFirstLine) {
@@ -99,13 +141,13 @@ void DialogueLayer::displayDialogue(const int fontsize, bool skipFirstLine) {
 			delayTime -= lineDisplayTime;
 		clip->runAction(Sequence::create(DelayTime::create(delayTime),
 			ScaleTo::create(lineDisplayTime, 2 * charsPerLine + 1, 1),
-			CallFuncN::create(CC_CALLBACK_1(DialogueLayer::onSpeakFinished, this)), NULL));
+			CallFuncN::create(CC_CALLBACK_1(DialogueLayer::onLineFinished, this)), NULL));
 	}
 }
 
-void DialogueLayer::onSpeakFinished(Node* sender) {
+void DialogueLayer::onLineFinished(Node* sender) {
 	auto node = dynamic_cast<ClippingNode*>(this->getChildByName("clippernode"));
 	auto stencil = node->getStencil();
 	if (stencil->getChildrenCount() == sender->getTag() + 1)
-		_status = DIALOGUE_STATUS::NORMAL;
+		_status = DIALOGUE_STATUS::FINISHED;
 }

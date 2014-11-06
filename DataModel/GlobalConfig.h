@@ -15,7 +15,9 @@ public:
 	float	getTextAreaWidth() const { return _textRightBottom.x - _textLeftTop.x; }
 	float	getTextAreaHeight() const { return _textLeftTop.y - _textRightBottom.y; }
 
-	CC_SYNTHESIZE(int, _textDisplaySpeed, TextSpeed);	//How many characters displayed for one seconds
+	CC_SYNTHESIZE(string, _dialogueBackPath, DialogueBackPath);		//Dialogue window background path
+	CC_SYNTHESIZE(string, _menuBtnPath, MenuBtnPath);				//Choice Button path
+	CC_SYNTHESIZE(int, _textDisplaySpeed, TextSpeed);				//How many characters displayed for one seconds
 
 	//Dialogue display font
 	CC_SYNTHESIZE(string, _fontPath, FontPath);			//Read from ttf

@@ -11,6 +11,7 @@
 #include "DialogueLayer.h"
 #include "BackgroundLayer.h"
 #include "DataModel\GlobalConfig.h"
+
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
 #include "../proj.win32/WIN32Utils.h"
 #endif 
@@ -20,9 +21,14 @@ bool ConversationScene::init()
     if (!Scene::init()) {
         return false;
     }
+
+	auto listener1 = EventListenerTouchOneByOne::create();
+	listener1->setSwallowTouches(true);
+	listener1->onTouchBegan = CC_CALLBACK_2(ConversationScene::onTouchBegan, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener1, this);
     
     string background = "images/bk.jpg";
-	string dialogueWindowBg = "images/dialogue/text1.png";
+	string dialogueWindowBg = GlobalConfig::getInstance()->getDialogueBackPath();
     
     _bgLayer = BackgroundLayer::create(background);
     _charLayer = CharacterLayer::create();
@@ -34,6 +40,20 @@ bool ConversationScene::init()
     return true;
 }
 
+bool ConversationScene::onTouchBegan(Touch *touch, Event *pEvent)
+{
+	switch (_status)
+	{
+	case CONVER_STATUS::MENU:
+	case CONVER_STATUS::DIALOGUE:
+		_speakLayer->onClicked();
+		break;
+	default:
+		break;
+	}
+	return false;
+}
+
 void ConversationScene::changeBackground(const string name, ActionInterval *action)
 {
     _speakLayer->runAction(FadeOut::create(0.5f));
@@ -43,7 +63,7 @@ void ConversationScene::changeBackground(const string name, ActionInterval *acti
 
 void ConversationScene::speaking(string name, string text, const bool showHead)
 {
-
+	_status = CONVER_STATUS::DIALOGUE;
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
 	if (name.length() > 0)
 		GBKToUTF(name);
@@ -64,10 +84,13 @@ void ConversationScene::changeCharacter(int position, const string name)
 
 void ConversationScene::showChoice(map<int, string> choices)
 {
-    
+	_status = CONVER_STATUS::MENU;
 }
 
 void ConversationScene::switchDialogueWindow()
 {
-    
+	if (_speakLayer->getOpacity() == 0)
+		_speakLayer->setOpacity(255);
+	else
+		_speakLayer->setOpacity(0);
 }

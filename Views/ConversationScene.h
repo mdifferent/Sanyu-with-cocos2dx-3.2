@@ -20,6 +20,11 @@ class DialogueLayer;
 class TextLayer;
 class ChoiceLayer;
 
+enum class CONVER_STATUS {
+	DIALOGUE,
+	MENU
+};
+
 class ConversationScene : public Scene
 {
 public:
@@ -31,6 +36,9 @@ public:
 	void speaking(string name, string text, const bool showHead = false);
     void showChoice(map<int,string> choices);
     void switchDialogueWindow();
+
+	bool onTouchBegan(Touch *touch, Event *pEvent);
+	CC_SYNTHESIZE(CONVER_STATUS, _status, Status);
 private:
     BackgroundLayer* _bgLayer;
     CharacterLayer* _charLayer;
