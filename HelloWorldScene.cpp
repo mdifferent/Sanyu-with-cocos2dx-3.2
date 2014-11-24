@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "Views\DigitSprite.h"
 #include "Views\MonsterHeadSprite.h"
+#include "Views\CharacterLayer.h"
 
 USING_NS_CC;
 
@@ -68,7 +69,7 @@ bool HelloWorld::init()
     // position the label on the center of the screen
     //label->setPosition(Vec2(origin.x + visibleSize.width/2,origin.y + visibleSize.height - label->getContentSize().height));
 	label->setAnchorPoint(Vec2(0, 1));
-	label->setPosition(Vec2(100, 100));
+	label->setPosition(Vec2(100,100));
 
     // add the label as a child to this layer
     //this->addChild(label, 1);
@@ -80,7 +81,7 @@ bool HelloWorld::init()
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
     // add the sprite as a child to this layer
-    //this->addChild(sprite, 0);
+    this->addChild(sprite, 0);
 
 	/*
 	MonsterHeadSprite *monster = MonsterHeadSprite::create("É­ÁÖÁ­Êó");
@@ -92,27 +93,18 @@ bool HelloWorld::init()
 	this->addChild(digit, 0);
 	digit->showDigit(21);*/
 	
-	auto move1 = ScaleTo::create(3.0f, 30, 1);
-	auto clip1 = LayerColor::create(Color4B::BLACK, 24, 24);
-	clip1->setPosition(Vec2(76, 76));
-
-	auto move2 = ScaleTo::create(3.0f, 30, 1);
-	auto clip2 = LayerColor::create(Color4B::BLACK, 24, 24);
-	clip2->setPosition(Vec2(76, 52));
-
-
+	/*
 	Node* stencil = Node::create();
+	auto clip1 = LayerColor::create(Color4B::BLACK, 24, 24);
+	clip1->setPosition(Vec2(100,76));
 	stencil->addChild(clip1);
-	stencil->addChild(clip2);
 
 	ClippingNode* clippingNode = ClippingNode::create(stencil);
-	clippingNode->addChild(label,2);
+	clippingNode->addChild(sprite);
+	addChild(clippingNode, 2);*/
 
-	addChild(clippingNode);
-
-	clip1->runAction(move1);
-	clip2->runAction(Sequence::create(DelayTime::create(3.0f), move2, NULL));
-
+	CharacterLayer *clayer = CharacterLayer::create();
+	addChild(clayer, 1, 1);
     return true;
 }
 
@@ -126,7 +118,36 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	/*
 	DigitSprite *digit = (DigitSprite*)getChildByName("digit");
 	digit->showDigit(73);*/
+	static int counter = 0;
 
+	CharacterLayer *clayer = dynamic_cast<CharacterLayer*>(getChildByTag(1));
+	list<string> properlist1;
+	CCLOG("%d", counter);
+		switch (counter % 5)
+		{
+		case 0:
+			properlist1.push_back("ÑÏËà");
+			clayer->showCharacter("ÑÅË¿¼Î", properlist1);
+			break;
+		case 1:
+			properlist1.push_back("ÑÏËà");
+			clayer->showCharacter("ÑÅË¿Áá", properlist1, "left");
+			break;
+		case 2:
+			properlist1.push_back("±ÕÑÛ");
+			clayer->showCharacter("ÑÅË¿¼Î", properlist1);
+			break;
+		case 3:
+			properlist1.push_back("±ÕÑÛ");
+			clayer->showCharacter("ÑÅË¿¼Î", properlist1, "right", CHAR_TRANSITION::MOVE_BETWEEN);
+			break;
+		case 4:
+			clayer->removeCharacter("ÑÅË¿Áá");
+			break;
+		default:
+			break;
+		}
+		counter++;
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
 #endif

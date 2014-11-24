@@ -27,6 +27,7 @@ public:
 	//Dialogue paragraph left-top corner position
 	CC_SYNTHESIZE(Vec2, _textLeftTop, TextLeftTop);
 	CC_SYNTHESIZE(Vec2, _textRightBottom, TextRightBottom);
+	CC_SYNTHESIZE(int, _sideImgOffset, SideImageOffset);		//Width of side image
 
 private:
 	GlobalConfig() {}

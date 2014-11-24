@@ -37,10 +37,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    //auto scene = HelloWorld::createScene();
+    auto scene = HelloWorld::createScene();
 	//auto scene = MainMenuScene::createScene();
-	auto scene = ConversationScene::create();
-	scene->speaking("Î÷ÑÅÂå", "ABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABC\nÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂå");
+	//auto scene = ConversationScene::create();
+	//scene->speaking("Î÷ÑÅÂå", "ABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABC\nÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂåABCÎ÷ÑÅÂå");
 	// run
     director->runWithScene(scene);
 

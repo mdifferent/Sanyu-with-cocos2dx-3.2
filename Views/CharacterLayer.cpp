@@ -7,6 +7,9 @@
 //
 
 #include "CharacterLayer.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
+#include "../proj.win32/WIN32Utils.h"
+#endif 
 
 bool CharacterLayer::init()
 {
@@ -31,19 +34,26 @@ void CharacterLayer::displayOnPosition(Sprite *sprite, string pos, CHAR_TRANSITI
 	case CHAR_TRANSITION::MOVE_BOTTOM_BOUND:
 		sprite->setPosition(_posDefine[pos].x, 0 - spriteSize.height);
 		sprite->runAction(MoveBy::create(transTime, Vec2(0, spriteSize.height)));
+		break;
 	case CHAR_TRANSITION::MOVE_TOP_BOUND:
 		sprite->setPosition(_posDefine[pos].x, screenSize.height);
 		sprite->runAction(MoveBy::create(transTime, Vec2(0, -screenSize.height)));
+		break;
 	case CHAR_TRANSITION::MOVE_LEFT_BOUND:
 		sprite->setPosition(0-spriteSize.width*0.5, 0);
 		sprite->runAction(MoveTo::create(transTime, Vec2(_posDefine[pos].x, 0)));
+		break;
 	case CHAR_TRANSITION::MOVE_RIGHT_BOUND:
 		sprite->setPosition(screenSize.width + spriteSize.width*0.5, 0);
 		sprite->runAction(MoveTo::create(transTime, Vec2(_posDefine[pos].x, 0)));
+		break;
 	case CHAR_TRANSITION::MOVE_BETWEEN:
 		sprite->runAction(MoveTo::create(transTime, _posDefine[pos]));
+		break;
 	case CHAR_TRANSITION::DISSOLVE:
+		sprite->setPosition(_posDefine[pos]);
 		sprite->runAction(FadeIn::create(transTime));
+		break;
 	default:
 		sprite->setPosition(_posDefine[pos]);
 		sprite->setOpacity(255);
@@ -51,22 +61,37 @@ void CharacterLayer::displayOnPosition(Sprite *sprite, string pos, CHAR_TRANSITI
 	}
 }
 
-void CharacterLayer::showCharacter(const string& name, list<string>& property, const string position, CHAR_TRANSITION trans, float transTime)
+string CharacterLayer::composePath(string name, list<string>& property)
 {
-	string path;
+	string path = "images/";
 	path.append(name);
 	for (string prop : property) {
 		path.append("_");
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+		GBKToUTF(prop);
+#endif
 		path.append(prop);
 	}
+	path.append(".png");
+	CCLOG("%s", path);
+	return path;
+}
+
+void CharacterLayer::showCharacter(string name, list<string>& property, const string position, CHAR_TRANSITION trans, float transTime)
+{
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	GBKToUTF(name);
+#endif
+	string path = composePath(name, property);
+	
 
 	Sprite* sprite = nullptr;
-	if (_charsPos.count(name) == 0) {						
+	if (_charsPos.count(name) == 0) {
 		//If this character haven't been shown on screen
 		//Create a new one on position, may be on top of another one
 		sprite = Sprite::create(path);
 		if (sprite != nullptr) {
-			sprite->setAnchorPoint(Vec2(0.5, 1));
+			sprite->setAnchorPoint(Vec2(0.5, 0));
 			sprite->setOpacity(0);
 			sprite->setName(name);
 			addChild(sprite);
@@ -82,16 +107,17 @@ void CharacterLayer::showCharacter(const string& name, list<string>& property, c
 		string currentPosStr = _charsPos[name];
 		sprite = static_cast<Sprite*>(this->getChildByName(name));
 		if (currentPosStr == position) {
-			sprite->setOpacity(0);
-			sprite->setSpriteFrame(path);
+			//sprite->setOpacity(0);
+			sprite->setTexture(path);
+			/*TODO: Other effect
 			if (trans == CHAR_TRANSITION::DISSOLVE)
 				displayOnPosition(sprite, position, trans, transTime);
 			else 
-				displayOnPosition(sprite, position, CHAR_TRANSITION::NONE, transTime);
+				displayOnPosition(sprite, position, CHAR_TRANSITION::NONE, transTime);*/
 		}
 		else {
 			//change position and texture
-			sprite->setSpriteFrame(path);
+			sprite->setTexture(path);
 			if (trans == CHAR_TRANSITION::MOVE_BETWEEN)
 				displayOnPosition(sprite, position, trans, transTime);
 			else
@@ -101,44 +127,47 @@ void CharacterLayer::showCharacter(const string& name, list<string>& property, c
 	}
 }
 
-void CharacterLayer::showCharacter(const string& name, list<string>& property, Vec2 posistion, CHAR_TRANSITION tran, float transTime)
+void CharacterLayer::showCharacter(string name, list<string>& property, Vec2 posistion, CHAR_TRANSITION tran, float transTime)
 {
     
 }
 
-void CharacterLayer::showCharacter(const string& name, list<string>& property, float xpos, CHAR_TRANSITION tran, float transTime)
+void CharacterLayer::showCharacter(string name, list<string>& property, float xpos, CHAR_TRANSITION tran, float transTime)
 {
     
 }
 
-void CharacterLayer::removeCharacter(const string& name, CHAR_TRANSITION tran, float transTime)
+void CharacterLayer::removeCharacter(string name, CHAR_TRANSITION tran, float transTime)
 {
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	GBKToUTF(name);
+#endif
 	Sprite* sprite = static_cast<Sprite*>(this->getChildByName(name));
 	Size screenSize = Director::getInstance()->getWinSize();
-	Size spriteSize = sprite->getContentSize();
 	if (sprite != nullptr && _charsPos.count(name) > 0) {
+		Size spriteSize = sprite->getContentSize();
+		auto removeSpriteAction = CallFunc::create([this,name](){ this->removeChildByName(name); });
 		switch (tran)
 		{
 		case CHAR_TRANSITION::DISSOLVE:
-			sprite->runAction(FadeOut::create(transTime));
+			sprite->runAction(Sequence::createWithTwoActions(FadeOut::create(transTime), removeSpriteAction));
 			break;
 		case CHAR_TRANSITION::MOVE_TOP_BOUND:
-			sprite->runAction(MoveBy::create(transTime, Vec2(0, screenSize.height)));
+			sprite->runAction(Sequence::createWithTwoActions(MoveBy::create(transTime, Vec2(0, screenSize.height)), removeSpriteAction));
 			break;
 		case CHAR_TRANSITION::MOVE_BOTTOM_BOUND:
-			sprite->runAction(MoveBy::create(transTime, Vec2(0, -spriteSize.height)));
+			sprite->runAction(Sequence::createWithTwoActions(MoveBy::create(transTime, Vec2(0, -spriteSize.height)), removeSpriteAction));
 			break;
 		case CHAR_TRANSITION::MOVE_LEFT_BOUND:
-			sprite->runAction(MoveTo::create(transTime, Vec2(-spriteSize.width*0.5, 0)));
+			sprite->runAction(Sequence::createWithTwoActions(MoveTo::create(transTime, Vec2(-spriteSize.width*0.5, 0)), removeSpriteAction));
 			break;
 		case CHAR_TRANSITION::MOVE_RIGHT_BOUND:
-			sprite->runAction(MoveTo::create(transTime, Vec2(screenSize.width + spriteSize.width*0.5, 0)));
+			sprite->runAction(Sequence::createWithTwoActions(MoveTo::create(transTime, Vec2(screenSize.width + spriteSize.width*0.5, 0)), removeSpriteAction));
 			break;
 		default:
-			sprite->setOpacity(0);
+			this->removeChildByName(name);
 			break;
 		}
-		this->removeChildByName(name);
 		_charsPos.erase(name);
 	}
 	else
