@@ -28,6 +28,7 @@ public:
     void choicesCallback(Ref* sender, Control::EventType event);
     int getRecentSelectedResult() const {return _selectedTag;}
 private:
+	ControlButton* createButton(int idx, string title = "");
     int _selectedTag;
 };
 

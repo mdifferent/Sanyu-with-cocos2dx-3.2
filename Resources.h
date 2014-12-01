@@ -59,9 +59,6 @@ static const char INFO_BAR[] = "images/info_bar.png";
 static const char DIGIT_PLIST_PATH[] = "images/number.plist";
 static const char DIGIT_PNG_PATH[] = "images/number.png";
 
-//Conversation mode
-static const char BUTTON_BG[] = "";
-
 //Select list
 static const char SELECT_LIST_BG_PATH[] = "images/list/selectback.png";
 static const char CELL_BG_PATH[] = "images/list/cellback.png";

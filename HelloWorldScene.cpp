@@ -3,6 +3,7 @@
 #include "Views\DigitSprite.h"
 #include "Views\MonsterHeadSprite.h"
 #include "Views\CharacterLayer.h"
+#include "Views\ChoiceLayer.h"
 
 USING_NS_CC;
 
@@ -81,7 +82,7 @@ bool HelloWorld::init()
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
 
     // add the sprite as a child to this layer
-    this->addChild(sprite, 0);
+    //this->addChild(sprite, 0);
 
 	/*
 	MonsterHeadSprite *monster = MonsterHeadSprite::create("…≠¡÷¡≠ Û");
@@ -94,6 +95,7 @@ bool HelloWorld::init()
 	digit->showDigit(21);*/
 	
 	/*
+	//dialogue layer test
 	Node* stencil = Node::create();
 	auto clip1 = LayerColor::create(Color4B::BLACK, 24, 24);
 	clip1->setPosition(Vec2(100,76));
@@ -103,8 +105,18 @@ bool HelloWorld::init()
 	clippingNode->addChild(sprite);
 	addChild(clippingNode, 2);*/
 
+	/*
+	//CharacterLayer test
 	CharacterLayer *clayer = CharacterLayer::create();
-	addChild(clayer, 1, 1);
+	addChild(clayer, 1, 1);*/
+
+
+	auto layer = ChoiceLayer::create();
+	layer->setAnchorPoint(Vec2(0.5, 0.5));
+	layer->setPosition(Vec2(400, 300));
+	addChild(layer, 2, 2);
+
+
     return true;
 }
 
@@ -115,15 +127,22 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
 	return;
 #endif
+	auto layer = static_cast<ChoiceLayer*>(this->getChildByTag(2));
+	vector<string> choices;
+	choices.push_back("œÚ◊Û◊ﬂ");
+	choices.push_back("œÚ”“◊ﬂ");
+	layer->setChoices(choices);
+
 	/*
 	DigitSprite *digit = (DigitSprite*)getChildByName("digit");
 	digit->showDigit(73);*/
+	/*
 	static int counter = 0;
 
 	CharacterLayer *clayer = dynamic_cast<CharacterLayer*>(getChildByTag(1));
 	list<string> properlist1;
 	CCLOG("%d", counter);
-		switch (counter % 5)
+		switch (counter % 6)
 		{
 		case 0:
 			properlist1.push_back("—œÀ‡");
@@ -131,23 +150,25 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 			break;
 		case 1:
 			properlist1.push_back("—œÀ‡");
-			clayer->showCharacter("—≈Àø¡·", properlist1, "left");
+			clayer->showCharacter("—≈Àø¡·", properlist1, "left", CHAR_TRANSITION::MOVE_BOTTOM_BOUND);
 			break;
 		case 2:
 			properlist1.push_back("±’—€");
-			clayer->showCharacter("—≈ÀøºŒ", properlist1);
+			clayer->showCharacter("—≈ÀøºŒ", properlist1, "right", CHAR_TRANSITION::MOVE_BETWEEN);
 			break;
 		case 3:
 			properlist1.push_back("±’—€");
-			clayer->showCharacter("—≈ÀøºŒ", properlist1, "right", CHAR_TRANSITION::MOVE_BETWEEN);
+			clayer->showCharacter("—≈ÀøºŒ", properlist1);
 			break;
 		case 4:
-			clayer->removeCharacter("—≈Àø¡·");
+			properlist1.push_back("—œÀ‡");
+			clayer->showCharacter("—≈Àø¡·", properlist1, "left", CHAR_TRANSITION::MOVE_LEFT_BOUND);
 			break;
 		default:
+			clayer->removeCharacter("—≈Àø¡·", CHAR_TRANSITION::MOVE_TOP_BOUND);
 			break;
 		}
-		counter++;
+		counter++;*/
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
 	exit(0);
 #endif

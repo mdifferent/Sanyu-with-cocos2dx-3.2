@@ -38,7 +38,7 @@ public:
     virtual bool init();
     CREATE_FUNC(CharacterLayer);
     
-	void showCharacter(string name, list<string>& property, const string position = "center", CHAR_TRANSITION trans = CHAR_TRANSITION::DISSOLVE, float transTime = 0.5f);
+	void showCharacter(string name, list<string>& property, const string position = "", CHAR_TRANSITION trans = CHAR_TRANSITION::DISSOLVE, float transTime = 0.5f);
 	void showCharacter(string name, list<string>& property, float xpos, CHAR_TRANSITION trans = CHAR_TRANSITION::DISSOLVE, float transTime = 0.5f);
 	void showCharacter(string name, list<string>& property, Vec2 posistion, CHAR_TRANSITION trans = CHAR_TRANSITION::DISSOLVE, float transTime = 0.5f);
 	void removeCharacter(string name, CHAR_TRANSITION trans = CHAR_TRANSITION::DISSOLVE, float transTime = 0.5f);

@@ -8,42 +8,60 @@
 
 #include "ChoiceLayer.h"
 #include "Resources.h"
+#include "DataModel\GlobalConfig.h"
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
+#include "../proj.win32/WIN32Utils.h"
+#endif 
 
 bool ChoiceLayer::init()
 {
     if (!Layer::init())
         return false;
     
-    ControlButton *button0 = ControlButton::create();
-    button0->setTag(0);
-    button0->setBackgroundSprite(Scale9Sprite::create(BUTTON_BG));
-    button0->addTargetWithActionForControlEvents(this,cccontrol_selector(ChoiceLayer::choicesCallback), Control::EventType::TOUCH_UP_INSIDE);
-    ControlButton *button1 = ControlButton::create();
-    button1->setTag(1);
-    button1->setBackgroundSprite(Scale9Sprite::create(BUTTON_BG));
-    button1->addTargetWithActionForControlEvents(this,cccontrol_selector(ChoiceLayer::choicesCallback), Control::EventType::TOUCH_UP_INSIDE);
-    
-    addChild(button0,0,0);
-    addChild(button1,0,1);
+	auto button0 = createButton(0);
+	auto button1 = createButton(1);
+    addChild(button0, 1, 0);
+    addChild(button1, 1, 1);
+
     return true;
+}
+
+ControlButton* ChoiceLayer::createButton(int idx, string title)
+{
+	string choiceBtnBg = GlobalConfig::getInstance()->getChoiceMenuBgPath();
+	Size screenSize = Director::getInstance()->getVisibleSize();
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
+	GBKToUTF(title);
+#endif 
+	auto button = ControlButton::create(title, 
+		GlobalConfig::getInstance()->getChoiceMenuFontName(), 
+		GlobalConfig::getInstance()->getChoiceMenuFontSize());
+	button->addTargetWithActionForControlEvents(this, cccontrol_selector(ChoiceLayer::choicesCallback), Control::EventType::TOUCH_UP_INSIDE);
+	button->setBackgroundSpriteForState(Scale9Sprite::create(choiceBtnBg), Control::State::NORMAL);
+	button->setPreferredSize(Size(screenSize.width*0.5, GlobalConfig::getInstance()->getChoiceMenuFontSize() + 4));
+	button->setOpacity(0);
+	button->setTitleColorForState(GlobalConfig::getInstance()->getChoiceMenuFontColor(), Control::State::NORMAL);
+	addChild(button, 0, idx);
+	return button;
 }
 
 void ChoiceLayer::setChoices(vector<string> choices)
 {
     size_t btnCount = getChildrenCount();
     size_t choiceCount = choices.size();
-    for (int i=0; i<btnCount; i++) {
-        ControlButton *btn = (ControlButton*)getChildByTag(i);
-        btn->setTitleForState(choices.at(i), Control::State::NORMAL);
-    }
-    if (choiceCount > btnCount) {
-        for (int i = btnCount; i<choices.size(); i++) {
-            ControlButton *button0 = ControlButton::create();
-            button0->setTag(i);
-            button0->setBackgroundSprite(Scale9Sprite::create(BUTTON_BG));
-            button0->addTargetWithActionForControlEvents(this,cccontrol_selector(ChoiceLayer::choicesCallback), Control::EventType::TOUCH_UP_INSIDE);
-            button0->setTitleForState(choices.at(i), Control::State::NORMAL);
-        }
+	if (choiceCount > btnCount)
+		for (int i = btnCount; i<choices.size(); i++) {
+			auto btn = createButton(i, choices[i]);
+		}
+	for (int i = 0; i < choiceCount; i++) {
+        auto btn = (ControlButton*)getChildByTag(i);
+		string choice = choices.at(i);
+		//TODO : determin the position based on amount of buttons
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
+		GBKToUTF(choice);
+#endif 
+        btn->setTitleForState(choice, Control::State::NORMAL);
+		btn->setOpacity(0);
     }
 }
 

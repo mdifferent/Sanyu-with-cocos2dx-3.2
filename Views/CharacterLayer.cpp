@@ -33,18 +33,22 @@ void CharacterLayer::displayOnPosition(Sprite *sprite, string pos, CHAR_TRANSITI
 	{
 	case CHAR_TRANSITION::MOVE_BOTTOM_BOUND:
 		sprite->setPosition(_posDefine[pos].x, 0 - spriteSize.height);
+		sprite->setOpacity(255);
 		sprite->runAction(MoveBy::create(transTime, Vec2(0, spriteSize.height)));
 		break;
 	case CHAR_TRANSITION::MOVE_TOP_BOUND:
 		sprite->setPosition(_posDefine[pos].x, screenSize.height);
+		sprite->setOpacity(255);
 		sprite->runAction(MoveBy::create(transTime, Vec2(0, -screenSize.height)));
 		break;
 	case CHAR_TRANSITION::MOVE_LEFT_BOUND:
 		sprite->setPosition(0-spriteSize.width*0.5, 0);
+		sprite->setOpacity(255);
 		sprite->runAction(MoveTo::create(transTime, Vec2(_posDefine[pos].x, 0)));
 		break;
 	case CHAR_TRANSITION::MOVE_RIGHT_BOUND:
 		sprite->setPosition(screenSize.width + spriteSize.width*0.5, 0);
+		sprite->setOpacity(255);
 		sprite->runAction(MoveTo::create(transTime, Vec2(_posDefine[pos].x, 0)));
 		break;
 	case CHAR_TRANSITION::MOVE_BETWEEN:
@@ -83,8 +87,6 @@ void CharacterLayer::showCharacter(string name, list<string>& property, const st
 	GBKToUTF(name);
 #endif
 	string path = composePath(name, property);
-	
-
 	Sprite* sprite = nullptr;
 	if (_charsPos.count(name) == 0) {
 		//If this character haven't been shown on screen
@@ -95,18 +97,24 @@ void CharacterLayer::showCharacter(string name, list<string>& property, const st
 			sprite->setOpacity(0);
 			sprite->setName(name);
 			addChild(sprite);
-			displayOnPosition(sprite, position, trans, transTime);
+			if (position.length() == 0) {
+				displayOnPosition(sprite, "center", trans, transTime);
+				_charsPos[name] = "center";
+			}
+			else {
+				displayOnPosition(sprite, position, trans, transTime);
+				_charsPos[name] = position;
+			}
 		}
 		else {
 			CCLOG("Error in create sprite : %s", path);
 		}
-		_charsPos[name] = position;
 	}
 	else {
 		//If this character has been shown on screen
 		string currentPosStr = _charsPos[name];
 		sprite = static_cast<Sprite*>(this->getChildByName(name));
-		if (currentPosStr == position) {
+		if (currentPosStr == position || position.length() == 0) {
 			//sprite->setOpacity(0);
 			sprite->setTexture(path);
 			/*TODO: Other effect
@@ -134,7 +142,7 @@ void CharacterLayer::showCharacter(string name, list<string>& property, Vec2 pos
 
 void CharacterLayer::showCharacter(string name, list<string>& property, float xpos, CHAR_TRANSITION tran, float transTime)
 {
-    
+	showCharacter(name, property, Vec2(xpos, 0), tran, transTime);
 }
 
 void CharacterLayer::removeCharacter(string name, CHAR_TRANSITION tran, float transTime)

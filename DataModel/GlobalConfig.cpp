@@ -13,7 +13,11 @@ GlobalConfig* GlobalConfig::getInstance()
 	_sharedInstance->_font = "Arial";
 	_sharedInstance->_textLeftTop = Vec2(50,140);
 	_sharedInstance->_textRightBottom = Vec2(750,20);
-	_sharedInstance->_dialogueBackPath = "images/dialogue/text1.png";
+	_sharedInstance->_dialogueBackPath = "images/dialogue/text1.png"; 
+	_sharedInstance->_choiceMenufont = "Arial";
+	_sharedInstance->_choiceMenuFontSize = 24;
+	_sharedInstance->_choiceMenuFontColor = Color3B::BLACK;
+	_sharedInstance->_choiceMenuBgPath = "images/choice_hover.png";
 
 	return _sharedInstance;
 }
