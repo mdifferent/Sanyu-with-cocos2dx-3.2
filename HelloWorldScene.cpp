@@ -4,6 +4,8 @@
 #include "Views\MonsterHeadSprite.h"
 #include "Views\CharacterLayer.h"
 #include "Views\ChoiceLayer.h"
+#include "ScriptProcessor.h"
+#include "platform\CCFileUtils.h"
 
 USING_NS_CC;
 
@@ -63,7 +65,7 @@ bool HelloWorld::init()
     auto label = Label::create();
 	label->setDimensions(400, 100);
 	label->setLineBreakWithoutSpace(true);
-	label->setString("123456789012345678901234567890 123456789012345678901234567890 12345678901234567890");
+	//label->setString("123456789012345678901234567890 123456789012345678901234567890 12345678901234567890");
 	label->setSystemFontName("Arial");
 	label->setSystemFontSize(24);
     
@@ -73,7 +75,7 @@ bool HelloWorld::init()
 	label->setPosition(Vec2(100,100));
 
     // add the label as a child to this layer
-    //this->addChild(label, 1);
+    this->addChild(label, 1);
 
     // add "HelloWorld" splash screen"
     auto sprite = Sprite::create("images/bk.jpg");
@@ -110,12 +112,21 @@ bool HelloWorld::init()
 	CharacterLayer *clayer = CharacterLayer::create();
 	addChild(clayer, 1, 1);*/
 
-
+	/*choice menu layer
 	auto layer = ChoiceLayer::create();
 	layer->setAnchorPoint(Vec2(0.5, 0.5));
 	layer->setPosition(Vec2(400, 300));
-	addChild(layer, 2, 2);
+	addChild(layer, 2, 2);*/
 
+	ScriptProcessor::getInstance()->preprocess();
+	/*
+	FileUtils::getInstance()->addSearchPath("scripts");
+	if (!FileUtils::getInstance()->isFileExist("script.txt")) {
+		CCLOG("cannot find file: script.rpy.");
+	}
+	string s = FileUtils::getInstance()->getStringFromFile("script.txt");
+	size_t pos = s.find_first_of("\r\n");
+	label->setString(s);*/
 
     return true;
 }
@@ -127,13 +138,14 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.", "Alert");
 	return;
 #endif
+	/*choice menu layer
 	auto layer = static_cast<ChoiceLayer*>(this->getChildByTag(2));
 	vector<string> choices;
 	choices.push_back("向左走");
 	choices.push_back("随便");
 	choices.push_back("向右走向右走向右走向右走向右走向右走向右走");
 	choices.push_back("不走了");
-	layer->setChoices(choices);
+	layer->setChoices(choices);*/
 
 	/*
 	DigitSprite *digit = (DigitSprite*)getChildByName("digit");

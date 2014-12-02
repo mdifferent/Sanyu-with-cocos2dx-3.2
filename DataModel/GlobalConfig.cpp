@@ -18,6 +18,7 @@ GlobalConfig* GlobalConfig::getInstance()
 	_sharedInstance->_choiceMenuFontSize = 24;
 	_sharedInstance->_choiceMenuFontColor = Color3B::BLACK;
 	_sharedInstance->_choiceMenuBgPath = "images/choice_hover.png";
+	_sharedInstance->_scriptDir = "scripts";
 
 	return _sharedInstance;
 }

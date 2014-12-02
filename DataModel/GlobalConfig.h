@@ -35,6 +35,8 @@ public:
 	CC_SYNTHESIZE(Vec2, _textRightBottom, TextRightBottom);					//Right-bottom position of text area
 	CC_SYNTHESIZE(int, _sideImgOffset, SideImageOffset);					//Width of side image
 
+	//File directory
+	CC_SYNTHESIZE(string, _scriptDir, ScriptDirectory);						//Related path of script files
 private:
 	GlobalConfig() {}
 	~GlobalConfig() {}
