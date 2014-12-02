@@ -20,8 +20,6 @@ bool ChoiceLayer::init()
     
 	auto button0 = createButton(0);
 	auto button1 = createButton(1);
-    addChild(button0, 1, 0);
-    addChild(button1, 1, 1);
 
     return true;
 }
@@ -38,7 +36,7 @@ ControlButton* ChoiceLayer::createButton(int idx, string title)
 		GlobalConfig::getInstance()->getChoiceMenuFontSize());
 	button->addTargetWithActionForControlEvents(this, cccontrol_selector(ChoiceLayer::choicesCallback), Control::EventType::TOUCH_UP_INSIDE);
 	button->setBackgroundSpriteForState(Scale9Sprite::create(choiceBtnBg), Control::State::NORMAL);
-	button->setPreferredSize(Size(screenSize.width*0.5, GlobalConfig::getInstance()->getChoiceMenuFontSize() + 4));
+	button->setPreferredSize(Size(screenSize.width*0.6, GlobalConfig::getInstance()->getChoiceMenuFontSize() + 10));
 	button->setOpacity(0);
 	button->setTitleColorForState(GlobalConfig::getInstance()->getChoiceMenuFontColor(), Control::State::NORMAL);
 	addChild(button, 0, idx);
@@ -49,6 +47,13 @@ void ChoiceLayer::setChoices(vector<string> choices)
 {
     size_t btnCount = getChildrenCount();
     size_t choiceCount = choices.size();
+	float btnHeight = GlobalConfig::getInstance()->getChoiceMenuFontSize() + 10;
+	float spaceBetweenBtn = btnHeight;
+	float deltaUnit = btnHeight + spaceBetweenBtn;
+	float initHeight = choiceCount % 2 == 0 
+		? spaceBetweenBtn*0.5 + (choiceCount / 2 - 1)*deltaUnit
+		: spaceBetweenBtn + btnHeight*0.5 + ((choiceCount - 1) / 2 - 1)*deltaUnit;
+
 	if (choiceCount > btnCount)
 		for (int i = btnCount; i<choices.size(); i++) {
 			auto btn = createButton(i, choices[i]);
@@ -56,12 +61,12 @@ void ChoiceLayer::setChoices(vector<string> choices)
 	for (int i = 0; i < choiceCount; i++) {
         auto btn = (ControlButton*)getChildByTag(i);
 		string choice = choices.at(i);
-		//TODO : determin the position based on amount of buttons
+		btn->setPosition(Vec2(0, initHeight - i*deltaUnit));
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
 		GBKToUTF(choice);
 #endif 
         btn->setTitleForState(choice, Control::State::NORMAL);
-		btn->setOpacity(0);
+		btn->setOpacity(255);
     }
 }
 
@@ -69,5 +74,7 @@ void ChoiceLayer::choicesCallback(Ref* sender, Control::EventType event)
 {
     ControlButton *pressedBtn = (ControlButton*)sender;
     _selectedTag = pressedBtn->getTag();
-    
+	CCLOG("Select tag : %d", _selectedTag);
+	for (auto child : getChildren())
+		child->setOpacity(0);
 }

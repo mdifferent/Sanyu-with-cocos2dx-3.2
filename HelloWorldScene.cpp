@@ -130,7 +130,9 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 	auto layer = static_cast<ChoiceLayer*>(this->getChildByTag(2));
 	vector<string> choices;
 	choices.push_back("向左走");
-	choices.push_back("向右走");
+	choices.push_back("随便");
+	choices.push_back("向右走向右走向右走向右走向右走向右走向右走");
+	choices.push_back("不走了");
 	layer->setChoices(choices);
 
 	/*
