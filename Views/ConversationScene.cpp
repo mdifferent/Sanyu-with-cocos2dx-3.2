@@ -10,7 +10,7 @@
 #include "CharacterLayer.h"
 #include "DialogueLayer.h"
 #include "BackgroundLayer.h"
-#include "DataModel\GlobalConfig.h"
+#include "..\DataModel\GlobalConfig.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
 #include "../proj.win32/WIN32Utils.h"

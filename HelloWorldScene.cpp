@@ -6,6 +6,8 @@
 #include "Views\ChoiceLayer.h"
 #include "ScriptProcessor.h"
 #include "platform\CCFileUtils.h"
+#include "CommonUtils.h"
+
 
 USING_NS_CC;
 
@@ -77,14 +79,16 @@ bool HelloWorld::init()
     // add the label as a child to this layer
     this->addChild(label, 1);
 
+	/*TintTest*/
+	/*
     // add "HelloWorld" splash screen"
-    auto sprite = Sprite::create("images/bk.jpg");
-
+    auto sprite = Sprite::create("images/380.png");
     // position the sprite on the center of the screen
     sprite->setPosition(Vec2(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
+	sprite->setColor(Color3B(0, 255, 0));
     // add the sprite as a child to this layer
-    //this->addChild(sprite, 0);
+    this->addChild(sprite, 1);
+	sprite->runAction(Sequence::createWithTwoActions(TintTo::create(3, 255, 255, 0), TintTo::create(3, 255, 0, 0)));*/
 
 	/*
 	MonsterHeadSprite *monster = MonsterHeadSprite::create("É­ÁÖÁ­Êó");
@@ -117,16 +121,17 @@ bool HelloWorld::init()
 	layer->setAnchorPoint(Vec2(0.5, 0.5));
 	layer->setPosition(Vec2(400, 300));
 	addChild(layer, 2, 2);*/
-
-	ScriptProcessor::getInstance()->preprocess();
-	/*
+	
+	/*Read script file
 	FileUtils::getInstance()->addSearchPath("scripts");
-	if (!FileUtils::getInstance()->isFileExist("script.txt")) {
+	if (!FileUtils::getInstance()->isFileExist("script.rpy")) {
 		CCLOG("cannot find file: script.rpy.");
 	}
-	string s = FileUtils::getInstance()->getStringFromFile("script.txt");
+	string s = FileUtils::getInstance()->getStringFromFile("script.rpy");
 	size_t pos = s.find_first_of("\r\n");
-	label->setString(s);*/
+	list<string> stmts = CommonUtils::splitString(s, "\r\n");
+	label->setString(stmts.front());
+*/
 
     return true;
 }

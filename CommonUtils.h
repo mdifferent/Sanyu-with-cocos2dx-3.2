@@ -1,4 +1,9 @@
+#ifndef __Sanyu__CommonUtils__
+#define __Sanyu__CommonUtils__
+
 #include <string>
+#include <list>
+using namespace std;
 
 #define CREATE_FUNC_WITH_STRING(__TYPE__, para) \
 	static __TYPE__* create(std::string para) \
@@ -17,3 +22,8 @@ if (pRet && pRet->init()) \
 	} \
 }
 
+class CommonUtils {
+public:
+	static list<string>* splitString(string &input, string token);
+};
+#endif

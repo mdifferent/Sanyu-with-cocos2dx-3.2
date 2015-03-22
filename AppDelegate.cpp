@@ -2,6 +2,7 @@
 #include "HelloWorldScene.h"
 #include "Views/MainMenuScene.h"
 #include "Views\ConversationScene.h"
+#include "Views\WalkingScene.h"
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
 #include "../proj.win32/WIN32Utils.h"
 #endif 
@@ -37,7 +38,10 @@ bool AppDelegate::applicationDidFinishLaunching() {
     director->setAnimationInterval(1.0 / 60);
 
     // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
+    //auto scene = HelloWorld::createScene();
+	auto scene = new WalkingScene("walker", 5, "mountain", 2);
+	if (scene && scene->init())
+		scene->autorelease();
 	//auto scene = MainMenuScene::createScene();
 	//auto scene = ConversationScene::create();
 	//scene->speaking("昹捇醫", "ABC昹捇醫ABC昹捇醫ABC昹捇醫ABC昹捇醫ABC昹捇醫ABC\n昹捇醫ABC昹捇醫ABC昹捇醫ABC昹捇醫ABC昹捇醫ABC昹捇醫ABC昹捇醫");

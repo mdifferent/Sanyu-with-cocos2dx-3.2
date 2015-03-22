@@ -36,4 +36,12 @@ static const char NUMBER_SPRITE_NAME_TEMPLATE[] = "number_%c";
 
 static const int CELL_WIDHT = 300;
 static const int CELL_HEIGHT = 40;
+
+static const char* KEYWORDS[] = { "label", "" };
+
+//Walking
+static const char WALKING_PATH[] = "images/walking/%s%d.jpg";
+static const float BACK_MOVING_INTERVAL = 4.0f;
+static const char WALKER_PLIST_PATH[] = "images/walking/walker.plist";
+static const char WALKER_TEXTURE_PATH[] = "images/walking/walker.png";
 #endif

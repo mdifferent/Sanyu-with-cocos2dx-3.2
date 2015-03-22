@@ -1,6 +1,7 @@
 #include "ScriptProcessor.h"
 #include "DataModel\GlobalConfig.h"
 #include "platform\CCFileUtils.h"
+#include "CommonUtils.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
 #include <regex>  
@@ -14,6 +15,10 @@
 #include <dirent.h>  
 #include <sys/stat.h>
 #endif  
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)  
+#include "../proj.win32/WIN32Utils.h"
+#endif 
 
 ScriptProcessor* ScriptProcessor::_sharedInstance = new ScriptProcessor();
 ScriptProcessor* ScriptProcessor::getInstance()
@@ -44,14 +49,28 @@ void ScriptProcessor::scanDirectory()
 		return;
 	}
 
+	//Scan script directory
+	vector<string> scriptList = FindAllFileInDir(GlobalConfig::getInstance()->getScriptDirectory());
+	for (string file : scriptList) {
+		string fileContent = FileUtils::getInstance()->getStringFromFile(file);
+		list<string> *stmts = CommonUtils::splitString(fileContent, "\r\n");
+		if (stmts != nullptr) {
+			//Scan each line of script file
+			for (string stmt : *stmts) {
+
+			}
+			delete stmts;
+			stmts = nullptr;
+		}
+	}
+
 	findLabels();
 
 }
 
 void ScriptProcessor::findLabels()
 {
-	vector<string> scriptList = FindAllFileInDir(GlobalConfig::getInstance()->getScriptDirectory());
-
+	
 }
 
 vector<string> ScriptProcessor::FindAllFileInDir(string folderPath)

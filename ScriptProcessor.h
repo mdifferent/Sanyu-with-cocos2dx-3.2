@@ -3,6 +3,7 @@
 #include <list>
 #include <tuple>
 #include <vector>
+#include <map>
 
 using namespace std;
 
@@ -24,6 +25,7 @@ private:
 	static ScriptProcessor* _sharedInstance;
 
 	list<tuple<string, string, int>> _labelsInFiles;	//filename,labelname,line-in-file
+	map<string, string> _variableList;
 };
 
 #endif
